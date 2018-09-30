@@ -8,6 +8,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
     let localServerAddress = "http://127.0.0.1:61621/status?timeout=9"
+    let serverFileLocation = Bundle.main.bundleURL.appendingPathComponent("Contents/Resources/gu-provider")
     var serverProcessHandle: Process?
     var localServerRequestTimer: Timer?
 
@@ -35,10 +36,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func launchServer() {
-        let serverLocation = Bundle.main.bundleURL.appendingPathComponent("Contents/Resources/gu-provider")
         do {
-            serverProcessHandle = try Process.run(serverLocation, arguments: ["server"]) { (process) in
-                NSLog("Process ended: " + serverLocation.absoluteString)
+            serverProcessHandle = try Process.run(serverFileLocation, arguments: ["server"]) { (process) in
+                NSLog("Process ended: " + self.serverFileLocation.absoluteString)
                 self.setMenuBarText(text: "Error.")
             }
             setMenuBarText(text: "Loading...")
