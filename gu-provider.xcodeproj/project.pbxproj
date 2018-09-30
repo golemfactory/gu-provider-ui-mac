@@ -10,6 +10,7 @@
 		BF01BDC82160A88E005E9939 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF01BDC72160A88E005E9939 /* AppDelegate.swift */; };
 		BF01BDCA2160A88F005E9939 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF01BDC92160A88F005E9939 /* Assets.xcassets */; };
 		BF01BDCD2160A88F005E9939 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = BF01BDCB2160A88F005E9939 /* MainMenu.xib */; };
+		BFE21F942160B7AC002DB26C /* gu-provider in Resources */ = {isa = PBXBuildFile; fileRef = BFE21F932160B7AC002DB26C /* gu-provider */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +20,7 @@
 		BF01BDCC2160A88F005E9939 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		BF01BDCE2160A88F005E9939 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BF01BDCF2160A88F005E9939 /* gu_provider.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = gu_provider.entitlements; sourceTree = "<group>"; };
+		BFE21F932160B7AC002DB26C /* gu-provider */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = "gu-provider"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,8 +58,17 @@
 				BF01BDCB2160A88F005E9939 /* MainMenu.xib */,
 				BF01BDCE2160A88F005E9939 /* Info.plist */,
 				BF01BDCF2160A88F005E9939 /* gu_provider.entitlements */,
+				BFE21F952160B7DF002DB26C /* binaries */,
 			);
 			path = "gu-provider";
+			sourceTree = "<group>";
+		};
+		BFE21F952160B7DF002DB26C /* binaries */ = {
+			isa = PBXGroup;
+			children = (
+				BFE21F932160B7AC002DB26C /* gu-provider */,
+			);
+			path = binaries;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -120,6 +131,7 @@
 			files = (
 				BF01BDCA2160A88F005E9939 /* Assets.xcassets in Resources */,
 				BF01BDCD2160A88F005E9939 /* MainMenu.xib in Resources */,
+				BFE21F942160B7AC002DB26C /* gu-provider in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
