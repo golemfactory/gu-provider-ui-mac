@@ -27,7 +27,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     let statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
     let localServerAddress = "http://127.0.0.1:61621/"
-    let serverFileLocation = Bundle.main.bundleURL.appendingPathComponent("Contents/Resources/gu-provider")
     var serverProcessHandle: Process?
     var localServerRequestTimer: Timer?
 
@@ -55,21 +54,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     func launchServerPolling() {
         localServerRequestTimer = Timer.scheduledTimer(timeInterval: 10, target: self,
                                                        selector: #selector(updateServerStatus), userInfo: nil, repeats: true)
-    }
-    
-    func launchServer() {
-        do {
-            serverProcessHandle = try Process.run(serverFileLocation, arguments: ["server"]) { (process) in
-                NSLog("Process ended: " + self.serverFileLocation.absoluteString)
-                self.setMenuBarText(text: "Error.")
-            }
-            setMenuBarText(text: "Loading...")
-            Timer.scheduledTimer(timeInterval: 2, target: self,
-                                 selector: #selector(updateServerStatus), userInfo: nil, repeats: false)
-        } catch {
-            NSLog(error.localizedDescription)
-            setMenuBarText(text: "Error")
-        }
     }
 
     func setMenuBarText(text: String) {
@@ -122,7 +106,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         providerProcess.arguments = arguments
         let pipe = Pipe()
         providerProcess.standardOutput = pipe
-        providerProcess.standardError = pipe
+        //providerProcess.standardError = pipe
         providerProcess.launch()
         NSLog("-->")
         let data = pipe.fileHandleForReading.readDataToEndOfFile()
