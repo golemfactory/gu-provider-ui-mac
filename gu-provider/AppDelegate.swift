@@ -17,12 +17,16 @@ struct NodeInfo: Decodable {
 class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTableViewDataSource {
     
     @IBOutlet weak var window: NSWindow!
+    @IBOutlet weak var addHubPanel: NSPanel!
     @IBOutlet weak var statusBarMenu: NSMenu!
     @IBOutlet weak var autoModeButton: NSButton!
     @IBOutlet weak var hubListTable: NSTableView!
+    @IBOutlet weak var hubIP: NSTextField!
+    @IBOutlet weak var hubPort: NSTextField!
+
     let statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
-    let localServerAddress = "http://127.0.0.1:61621/status?timeout=9"
+    let localServerAddress = "http://127.0.0.1:61621/"
     let serverFileLocation = Bundle.main.bundleURL.appendingPathComponent("Contents/Resources/gu-provider")
     var serverProcessHandle: Process?
     var localServerRequestTimer: Timer?
@@ -35,7 +39,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     }
 
     @objc func updateServerStatus() {
-        URLSession.shared.dataTask(with: URL(string:localServerAddress)!) { (data, res, err) in
+        URLSession.shared.dataTask(with: URL(string:localServerAddress+"status?timeout=9")!) { (data, res, err) in
             if (data == nil) { return }
             do {
                 let json = try JSONDecoder().decode(ServerResponse.self, from:data!)
@@ -70,7 +74,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
 
     func setMenuBarText(text: String) {
         DispatchQueue.main.async {
-            self.statusBarItem.button!.title = "GU:  " + text + "  "
+            //self.statusBarItem.button!.title = "GU:  " + text + "  "
         }
     }
     
@@ -83,7 +87,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     }
     
     @IBAction func showConfigurationWindow(_ sender: Any) {
-        window.makeKeyAndOrderFront(self);
+        NSApp.activate(ignoringOtherApps: true)
+        window.makeKeyAndOrderFront(self)
     }
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
@@ -95,7 +100,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         } else {
             let cell = tableView.makeView(withIdentifier:NSUserInterfaceItemIdentifier("Selected"), owner: nil) as! NSTableCellView
             (cell.viewWithTag(100) as! NSButton).action = #selector(AppDelegate.checkBoxPressed)
-            (cell.viewWithTag(100) as! NSButton).state = nodeSelected[row] ? .on : .off;
+            (cell.viewWithTag(100) as! NSButton).state = nodeSelected[row] ? .on : .off
             return cell
         }
     }
@@ -104,17 +109,25 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         return nodes.count
     }
     
-    func getProviderOutput(arguments: [String]) -> Data {
+    func getProviderOutput(arguments: [String]) -> Data? {
         NSLog("%@", arguments.joined(separator: "/"))
         let providerProcess = Process()
+        // TODO
         providerProcess.launchPath = "/Users/dev/.cargo/bin/gu-provider"
+        //providerProcess.launchPath = "/Users/user/Documents/golem-unlimited/target/debug/gu-provider"
+        if !FileManager.default.isExecutableFile(atPath: providerProcess.launchPath!) {
+            showError(message: "Error: " + providerProcess.launchPath! + " not found.")
+            return nil
+        }
         providerProcess.arguments = arguments
         let pipe = Pipe()
         providerProcess.standardOutput = pipe
-        //providerProcess.standardError = pipe
+        providerProcess.standardError = pipe
         providerProcess.launch()
+        NSLog("-->")
         let data = pipe.fileHandleForReading.readDataToEndOfFile()
         providerProcess.waitUntilExit()
+        NSLog("-->OK %@", String(data: data, encoding: .utf8)!)
         //let sys = String(data: retData, encoding: .utf8)
         return data
     }
@@ -122,13 +135,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     func dataToBool(data: Data) -> Bool? { return String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespaces).lowercased() == "true" }
     
     func reloadHubList() {
-        let auto = getProviderOutput(arguments: ["configure", "-g", "auto"])
+        let auto = getProviderOutput(arguments: ["configure", "-g", "auto"]) ?? "false".data(using: .utf8, allowLossyConversion: false)!
         autoModeButton.state = (dataToBool(data: auto) ?? false) ? .on : .off
-        let data = getProviderOutput(arguments: ["--json", "lan", "list", "-I", "hub"])
+        let data = getProviderOutput(arguments: ["--json", "lan", "list", "-I", "hub"]) ?? "[]".data(using: .utf8, allowLossyConversion: false)!
         nodes = try! JSONDecoder().decode([NodeInfo].self, from: data)
         nodeSelected = []
         for node in nodes {
-            nodeSelected.append(dataToBool(data: getProviderOutput(arguments: ["configure", "-g", node.nodeId()!])) ?? false)
+            nodeSelected.append(dataToBool(data: getProviderOutput(arguments: ["configure", "-g", node.nodeId()!])!) ?? false)
         }
         hubListTable.reloadData()
     }
@@ -140,7 +153,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     }
 	
     @IBAction func addHubPressed(_ sender: NSButton) {
-        // TODO
+        addHubPanel.makeKeyAndOrderFront(self)
     }
     
     @IBAction func refreshPressed(_ sender: NSButton) {
@@ -151,8 +164,36 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         let _ = getProviderOutput(arguments: ["configure", sender.state == .on ? "-A" : "-D"])
         let _ = getProviderOutput(arguments: ["hubs", sender.state == .on ? "auto" : "manual"])
     }
-    
+
+    func showError(message: String) {
+        let alert = NSAlert()
+        alert.messageText = message
+        alert.addButton(withTitle: "OK")
+        alert.runModal()
+    }
+
+    @IBAction func addEnteredHub(_ sender: NSButton) {
+        let ipPort = hubIP.stringValue + ":" + hubPort.stringValue
+        // TODO check IP
+        let urlString = "http://" + ipPort + "/node_id/"
+        URLSession.shared.dataTask(with: URL(string: urlString)!) { (data, res, err) in
+            if data == nil || err != nil { self.showError(message: "Cannot connect to " + urlString); return }
+            let nodeIdAndHostName = String(data: data!, encoding: .utf8)!.split(separator: " ")
+            if nodeIdAndHostName.count != 2 || (res as! HTTPURLResponse).statusCode != 200 {
+                self.showError(message: "Bad answer from " + urlString + ".")
+                return
+            }
+            let args = ["configure", "-a", String(nodeIdAndHostName[0]), ipPort, String(nodeIdAndHostName[1])]
+            let _ = self.getProviderOutput(arguments: args)
+            DispatchQueue.main.async {
+                self.reloadHubList()
+                self.addHubPanel.orderOut(self)
+            }
+        }.resume()
+    }
+
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        addHubPanel.isFloatingPanel = true
         addStatusBarMenu()
         launchServerPolling()
         reloadHubList()
