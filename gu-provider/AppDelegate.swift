@@ -13,6 +13,15 @@ struct NodeInfo: Decodable {
     }
 }
 
+struct SavedNodeInfo: Decodable {
+    var name: String
+    var address: String
+    var nodeId: String
+    enum CodingKeys: String, CodingKey {
+        case name = "host_name", address, nodeId = "node_id"
+    }
+}
+
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTableViewDataSource {
     
@@ -43,7 +52,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
             do {
                 let json = try JSONDecoder().decode(ServerResponse.self, from:data!)
                 let status = json.envs["hostDirect"] ?? "Error"
-                NSLog("Server status: " + status + ".")
                 self.setMenuBarText(text: status)
             } catch {
                 NSLog("Cannot get server status.")
@@ -94,11 +102,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     }
     
     func getProviderOutput(arguments: [String]) -> Data? {
-        NSLog("%@", arguments.joined(separator: "/"))
         let providerProcess = Process()
-        // TODO
         providerProcess.launchPath = "/Users/dev/.cargo/bin/gu-provider"
-        //providerProcess.launchPath = "/Users/user/Documents/golem-unlimited/target/debug/gu-provider"
         if !FileManager.default.isExecutableFile(atPath: providerProcess.launchPath!) {
             showError(message: "Error: " + providerProcess.launchPath! + " not found.")
             return nil
@@ -106,13 +111,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         providerProcess.arguments = arguments
         let pipe = Pipe()
         providerProcess.standardOutput = pipe
-        //providerProcess.standardError = pipe
+        providerProcess.standardError = nil
         providerProcess.launch()
-        NSLog("-->")
         let data = pipe.fileHandleForReading.readDataToEndOfFile()
         providerProcess.waitUntilExit()
-        NSLog("-->OK %@", String(data: data, encoding: .utf8)!)
-        //let sys = String(data: retData, encoding: .utf8)
         return data
     }
     
@@ -121,11 +123,22 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     func reloadHubList() {
         let auto = getProviderOutput(arguments: ["configure", "-g", "auto"]) ?? "false".data(using: .utf8, allowLossyConversion: false)!
         autoModeButton.state = (dataToBool(data: auto) ?? false) ? .on : .off
+        var all: Set<String> = []
         let data = getProviderOutput(arguments: ["--json", "lan", "list", "-I", "hub"]) ?? "[]".data(using: .utf8, allowLossyConversion: false)!
         nodes = try! JSONDecoder().decode([NodeInfo].self, from: data)
         nodeSelected = []
         for node in nodes {
             nodeSelected.append(dataToBool(data: getProviderOutput(arguments: ["configure", "-g", node.nodeId()!])!) ?? false)
+            all.insert(node.nodeId()!)
+        }
+        let saved_nodes_data = getProviderOutput(arguments: ["configure", "-l"]) ?? "[]".data(using: .utf8, allowLossyConversion: false)!
+        let saved_nodes = try! JSONDecoder().decode([SavedNodeInfo].self, from: saved_nodes_data)
+        for node in saved_nodes {
+            if !all.contains(node.nodeId) {
+                nodes.append(NodeInfo(name: node.name, address: node.address, description: "node_id=" + node.nodeId))
+                nodeSelected.append(dataToBool(data: getProviderOutput(arguments: ["configure", "-g", node.nodeId])!) ?? false)
+                all.insert(node.nodeId)
+            }
         }
         hubListTable.reloadData()
     }
@@ -150,10 +163,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     }
 
     func showError(message: String) {
-        let alert = NSAlert()
-        alert.messageText = message
-        alert.addButton(withTitle: "OK")
-        alert.runModal()
+        DispatchQueue.main.async {
+            let alert = NSAlert()
+            alert.messageText = message
+            alert.addButton(withTitle: "OK")
+            alert.runModal()
+        }
     }
 
     @IBAction func addEnteredHub(_ sender: NSButton) {
@@ -161,7 +176,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         // TODO check IP
         let urlString = "http://" + ipPort + "/node_id/"
         URLSession.shared.dataTask(with: URL(string: urlString)!) { (data, res, err) in
-            if data == nil || err != nil { self.showError(message: "Cannot connect to " + urlString); return }
+            if data == nil || err != nil { self.showError(message: "Cannot connect to " + ipPort); return }
             let nodeIdAndHostName = String(data: data!, encoding: .utf8)!.split(separator: " ")
             if nodeIdAndHostName.count != 2 || (res as! HTTPURLResponse).statusCode != 200 {
                 self.showError(message: "Bad answer from " + urlString + ".")
@@ -171,6 +186,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
             let _ = self.getProviderOutput(arguments: args)
             DispatchQueue.main.async {
                 self.reloadHubList()
+                self.hubIP.stringValue = ""
                 self.addHubPanel.orderOut(self)
             }
         }.resume()
@@ -181,6 +197,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         addStatusBarMenu()
         launchServerPolling()
         reloadHubList()
+        if !UserDefaults.standard.bool(forKey: "firstRun") {
+            UserDefaults.standard.set(true, forKey: "firstRun")
+            showConfigurationWindow(self)
+        }
     }
     
     func applicationWillTerminate(_ notification: Notification) {
