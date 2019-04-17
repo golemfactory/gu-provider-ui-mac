@@ -48,13 +48,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
 
     @objc func updateServerStatus() {
         URLSession.shared.dataTask(with: URL(string:localServerAddress+"status?timeout=9")!) { (data, res, err) in
-            if (data == nil) { return }
+            if (data == nil) { self.setMenuBarText(text: "!"); return }
             do {
                 let json = try JSONDecoder().decode(ServerResponse.self, from:data!)
                 let status = json.envs["hostDirect"] ?? "Error"
-                self.setMenuBarText(text: status)
+                self.setMenuBarText(text: status == "Ready" ? "" : "!")
             } catch {
-                NSLog("Cannot get server status.")
+                self.setMenuBarText(text: "!");
             }
         }.resume()
     }
@@ -66,12 +66,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
 
     func setMenuBarText(text: String) {
         DispatchQueue.main.async {
-            //self.statusBarItem.button!.title = "GU:  " + text + "  "
+            self.statusBarItem.button!.title = text
         }
     }
     
     func addStatusBarMenu() {
-        setMenuBarText(text: "Loading...")
         statusBarItem.button?.image = NSImage.init(named: "GolemMenuIcon")
         statusBarItem.button?.image?.isTemplate = true
         statusBarItem.button?.imagePosition = NSControl.ImagePosition.imageLeft
