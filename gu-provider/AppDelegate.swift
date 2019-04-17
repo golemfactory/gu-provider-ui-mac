@@ -102,12 +102,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     
     func getProviderOutput(arguments: [String]) -> Data? {
         let providerProcess = Process()
-        providerProcess.launchPath = "/Users/dev/.cargo/bin/gu-provider"
-        if !FileManager.default.isExecutableFile(atPath: providerProcess.launchPath!) {
-            showError(message: "Error: " + providerProcess.launchPath! + " not found.")
-            return nil
-        }
-        providerProcess.arguments = arguments
+        providerProcess.launchPath = "/bin/bash"
+        providerProcess.arguments = ["-lc", "gu-provider " + arguments.joined(separator: " ")]
         let pipe = Pipe()
         providerProcess.standardOutput = pipe
         providerProcess.standardError = nil
@@ -144,7 +140,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     
     @objc func checkBoxPressed(sender: NSButton) {
         let row = hubListTable.row(for:sender)
-        let _ = getProviderOutput(arguments: ["configure", sender.state == .on ? "-a" : "-d", nodes[row].nodeId() ?? "", nodes[row].address, nodes[row].name])
+        let _ = getProviderOutput(arguments: ["configure", sender.state == .on ? "-a" : "-d", nodes[row].nodeId() ?? "_", nodes[row].address,
+                                              nodes[row].name.replacingOccurrences(of: " ", with: "_")])
         let _ = getProviderOutput(arguments: ["hubs", sender.state == .on ? "connect" : "disconnect", nodes[row].address])
     }
 	
