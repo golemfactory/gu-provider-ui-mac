@@ -10,6 +10,9 @@
 		BF01BDC82160A88E005E9939 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF01BDC72160A88E005E9939 /* AppDelegate.swift */; };
 		BF01BDCA2160A88F005E9939 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF01BDC92160A88F005E9939 /* Assets.xcassets */; };
 		BF01BDCD2160A88F005E9939 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = BF01BDCB2160A88F005E9939 /* MainMenu.xib */; };
+		D72D11BB2271AF5000656FCD /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72D11B72271AF5000656FCD /* Socket.swift */; };
+		D72D11BC2271AF5000656FCD /* SocketProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72D11B92271AF5000656FCD /* SocketProtocols.swift */; };
+		D72D11BD2271AF5000656FCD /* SocketUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72D11BA2271AF5000656FCD /* SocketUtils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +22,10 @@
 		BF01BDCC2160A88F005E9939 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		BF01BDCE2160A88F005E9939 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BF01BDCF2160A88F005E9939 /* gu_provider.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = gu_provider.entitlements; sourceTree = "<group>"; };
+		D72D11B72271AF5000656FCD /* Socket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
+		D72D11B82271AF5000656FCD /* Socket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Socket.h; sourceTree = "<group>"; };
+		D72D11B92271AF5000656FCD /* SocketProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketProtocols.swift; sourceTree = "<group>"; };
+		D72D11BA2271AF5000656FCD /* SocketUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketUtils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +58,7 @@
 		BF01BDC62160A88E005E9939 /* gu-provider */ = {
 			isa = PBXGroup;
 			children = (
+				D72D0FF92271A05100656FCD /* Dependencies */,
 				BF01BDC72160A88E005E9939 /* AppDelegate.swift */,
 				BF01BDC92160A88F005E9939 /* Assets.xcassets */,
 				BF01BDCB2160A88F005E9939 /* MainMenu.xib */,
@@ -58,6 +66,25 @@
 				BF01BDCF2160A88F005E9939 /* gu_provider.entitlements */,
 			);
 			path = "gu-provider";
+			sourceTree = "<group>";
+		};
+		D72D0FF92271A05100656FCD /* Dependencies */ = {
+			isa = PBXGroup;
+			children = (
+				D72D11AF2271A3B700656FCD /* BlueSocket */,
+			);
+			path = Dependencies;
+			sourceTree = "<group>";
+		};
+		D72D11AF2271A3B700656FCD /* BlueSocket */ = {
+			isa = PBXGroup;
+			children = (
+				D72D11B82271AF5000656FCD /* Socket.h */,
+				D72D11B72271AF5000656FCD /* Socket.swift */,
+				D72D11B92271AF5000656FCD /* SocketProtocols.swift */,
+				D72D11BA2271AF5000656FCD /* SocketUtils.swift */,
+			);
+			path = BlueSocket;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -136,6 +163,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D72D11BB2271AF5000656FCD /* Socket.swift in Sources */,
+				D72D11BC2271AF5000656FCD /* SocketProtocols.swift in Sources */,
+				D72D11BD2271AF5000656FCD /* SocketUtils.swift in Sources */,
 				BF01BDC82160A88E005E9939 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
