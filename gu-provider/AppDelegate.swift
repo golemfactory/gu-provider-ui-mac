@@ -64,12 +64,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         self.setMenuBarText(text: isServerReady() ? "" : "!");
     }
 
-    func readUnixSocket(path: String, query: String) -> String? {
+    func requestHTTPFromUnixSocket(path: String, method: String, query: String) -> String? {
         do {
             let socket = try Socket.create(family: .unix, type: Socket.SocketType.stream, proto: .unix)
             try socket.connect(to: path)
-            try socket.write(from: "GET " + query + " HTTP/1.0\r\n\r\n")
-            let result = try socket.readString()!
+            try socket.write(from: method + " " + query + " HTTP/1.0\r\n\r\n")
+            var result = ""
+            while true {
+                let str = try? socket.readString()
+                if str == nil || str! == nil { break } else { result += str!! }
+            }
             socket.close()
             return result
         } catch {
@@ -78,7 +82,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     }
 
     func getHTTPBodyFromUnixSocket(path: String, query: String) -> String? {
-        let response = readUnixSocket(path: path, query: query)
+        let response = requestHTTPFromUnixSocket(path: path, method: "GET", query: query)
         if response == nil { return nil }
         let body = response!.components(separatedBy: "\r\n\r\n").dropFirst().joined(separator: "\r\n\r\n")
         return body
