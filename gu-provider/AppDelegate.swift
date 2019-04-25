@@ -24,7 +24,7 @@ struct SavedNodeInfo: Decodable {
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTableViewDataSource {
-    
+
     @IBOutlet weak var window: NSWindow!
     @IBOutlet weak var addHubPanel: NSPanel!
     @IBOutlet weak var statusBarMenu: NSMenu!
@@ -36,27 +36,52 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     let statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
     let localServerAddress = "http://127.0.0.1:61621/"
+    let unixSocketPath = "/tmp/gu-provider.socket"
     var serverProcessHandle: Process?
     var localServerRequestTimer: Timer?
 
     var nodes: [NodeInfo] = []
     var nodeSelected: [Bool] = []
-    
+
     struct ServerResponse: Decodable {
         let envs: [String:String]
     }
 
+    func isServerReady() -> Bool {
+        let status = getHTTPBodyFromUnixSocket(path: unixSocketPath, query: "/status?timeout=5")
+        if status == nil { return false }
+        do {
+            let json = try JSONDecoder().decode(ServerResponse.self, from:status!.data(using: .utf8)!)
+            let status = json.envs["hostDirect"] ?? "Error"
+            return status == "Ready"
+        } catch {
+            return false
+        }
+
+    }
+
     @objc func updateServerStatus() {
-        URLSession.shared.dataTask(with: URL(string:localServerAddress+"status?timeout=9")!) { (data, res, err) in
-            if (data == nil) { self.setMenuBarText(text: "!"); return }
-            do {
-                let json = try JSONDecoder().decode(ServerResponse.self, from:data!)
-                let status = json.envs["hostDirect"] ?? "Error"
-                self.setMenuBarText(text: status == "Ready" ? "" : "!")
-            } catch {
-                self.setMenuBarText(text: "!");
-            }
-        }.resume()
+        self.setMenuBarText(text: isServerReady() ? "" : "!");
+    }
+
+    func readUnixSocket(path: String, query: String) -> String? {
+        do {
+            let socket = try Socket.create(family: .unix, type: Socket.SocketType.stream, proto: .unix)
+            try socket.connect(to: path)
+            try socket.write(from: "GET " + query + " HTTP/1.0\r\n\r\n")
+            let result = try socket.readString()!
+            socket.close()
+            return result
+        } catch {
+            return nil
+        }
+    }
+
+    func getHTTPBodyFromUnixSocket(path: String, query: String) -> String? {
+        let response = readUnixSocket(path: path, query: query)
+        if response == nil { return nil }
+        let body = response!.components(separatedBy: "\r\n\r\n").dropFirst().joined(separator: "\r\n\r\n")
+        return body
     }
 
     func launchServerPolling() {
@@ -69,19 +94,19 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
             self.statusBarItem.button!.title = text
         }
     }
-    
+
     func addStatusBarMenu() {
         statusBarItem.button?.image = NSImage.init(named: "GolemMenuIcon")
         statusBarItem.button?.image?.isTemplate = true
         statusBarItem.button?.imagePosition = NSControl.ImagePosition.imageLeft
         statusBarItem.menu = statusBarMenu
     }
-    
+
     @IBAction func showConfigurationWindow(_ sender: Any) {
         NSApp.activate(ignoringOtherApps: true)
         window.makeKeyAndOrderFront(self)
     }
-    
+
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         if tableColumn?.identifier.rawValue != "Selected" {
             let cell = tableView.makeView(withIdentifier:NSUserInterfaceItemIdentifier(tableColumn!.identifier.rawValue + ""), owner: nil) as! NSTableCellView
@@ -95,11 +120,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
             return cell
         }
     }
-    
+
     func numberOfRows(in tableView: NSTableView) -> Int {
         return nodes.count
     }
-    
+
     func getProviderOutput(arguments: [String]) -> Data? {
         let providerProcess = Process()
         providerProcess.launchPath = "/bin/bash"
@@ -112,9 +137,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         providerProcess.waitUntilExit()
         return data
     }
-    
+
     func dataToBool(data: Data) -> Bool? { return String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespaces).lowercased() == "true" }
-    
+
     func reloadHubList() {
         let auto = getProviderOutput(arguments: ["configure", "-g", "auto"]) ?? "false".data(using: .utf8, allowLossyConversion: false)!
         autoModeButton.state = (dataToBool(data: auto) ?? false) ? .on : .off
@@ -137,22 +162,22 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         }
         hubListTable.reloadData()
     }
-    
+
     @objc func checkBoxPressed(sender: NSButton) {
         let row = hubListTable.row(for:sender)
         let _ = getProviderOutput(arguments: ["configure", sender.state == .on ? "-a" : "-d", nodes[row].nodeId() ?? "_", nodes[row].address,
                                               nodes[row].name.replacingOccurrences(of: " ", with: "_")])
         let _ = getProviderOutput(arguments: ["hubs", sender.state == .on ? "connect" : "disconnect", nodes[row].address])
     }
-	
+
     @IBAction func addHubPressed(_ sender: NSButton) {
         addHubPanel.makeKeyAndOrderFront(self)
     }
-    
+
     @IBAction func refreshPressed(_ sender: NSButton) {
         reloadHubList()
     }
-    
+
     @IBAction func autoConnectPressed(_ sender: NSButton) {
         let _ = getProviderOutput(arguments: ["configure", sender.state == .on ? "-A" : "-D"])
         let _ = getProviderOutput(arguments: ["hubs", sender.state == .on ? "auto" : "manual"])
@@ -198,7 +223,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
             showConfigurationWindow(self)
         }
     }
-    
+
     func applicationWillTerminate(_ notification: Notification) {
         localServerRequestTimer?.invalidate()
         serverProcessHandle?.terminate()
