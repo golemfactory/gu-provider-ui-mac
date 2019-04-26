@@ -21,7 +21,6 @@
 		BF01BDC92160A88F005E9939 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BF01BDCC2160A88F005E9939 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		BF01BDCE2160A88F005E9939 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BF01BDCF2160A88F005E9939 /* gu_provider.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = gu_provider.entitlements; sourceTree = "<group>"; };
 		E3FA1A9487D213C26F40B8DC /* Pods-gu-provider.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gu-provider.release.xcconfig"; path = "Target Support Files/Pods-gu-provider/Pods-gu-provider.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -79,7 +78,6 @@
 				BF01BDC92160A88F005E9939 /* Assets.xcassets */,
 				BF01BDCB2160A88F005E9939 /* MainMenu.xib */,
 				BF01BDCE2160A88F005E9939 /* Info.plist */,
-				BF01BDCF2160A88F005E9939 /* gu_provider.entitlements */,
 			);
 			path = "gu-provider";
 			sourceTree = "<group>";
@@ -347,7 +345,6 @@
 			baseConfigurationReference = 6E7DBB9C25FE46DB04DC7AF8 /* Pods-gu-provider.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = "gu-provider/gu_provider.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "gu-provider/Info.plist";
@@ -366,7 +363,6 @@
 			baseConfigurationReference = E3FA1A9487D213C26F40B8DC /* Pods-gu-provider.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = "gu-provider/gu_provider.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "gu-provider/Info.plist";
