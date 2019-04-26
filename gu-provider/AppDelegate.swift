@@ -1,4 +1,5 @@
 import Cocoa
+import Socket
 
 struct NodeInfo: Decodable {
     var name: String

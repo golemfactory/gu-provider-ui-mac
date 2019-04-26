@@ -7,25 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8F12698BDC7BA766EDEAB80F /* Pods_gu_provider.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 276B505BE3309155A6F161C0 /* Pods_gu_provider.framework */; };
 		BF01BDC82160A88E005E9939 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF01BDC72160A88E005E9939 /* AppDelegate.swift */; };
 		BF01BDCA2160A88F005E9939 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF01BDC92160A88F005E9939 /* Assets.xcassets */; };
 		BF01BDCD2160A88F005E9939 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = BF01BDCB2160A88F005E9939 /* MainMenu.xib */; };
-		D72D11BB2271AF5000656FCD /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72D11B72271AF5000656FCD /* Socket.swift */; };
-		D72D11BC2271AF5000656FCD /* SocketProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72D11B92271AF5000656FCD /* SocketProtocols.swift */; };
-		D72D11BD2271AF5000656FCD /* SocketUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72D11BA2271AF5000656FCD /* SocketUtils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		276B505BE3309155A6F161C0 /* Pods_gu_provider.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_gu_provider.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E7DBB9C25FE46DB04DC7AF8 /* Pods-gu-provider.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gu-provider.debug.xcconfig"; path = "Target Support Files/Pods-gu-provider/Pods-gu-provider.debug.xcconfig"; sourceTree = "<group>"; };
 		BF01BDC42160A88E005E9939 /* gu-provider.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "gu-provider.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF01BDC72160A88E005E9939 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BF01BDC92160A88F005E9939 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BF01BDCC2160A88F005E9939 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		BF01BDCE2160A88F005E9939 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BF01BDCF2160A88F005E9939 /* gu_provider.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = gu_provider.entitlements; sourceTree = "<group>"; };
-		D72D11B72271AF5000656FCD /* Socket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
-		D72D11B82271AF5000656FCD /* Socket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Socket.h; sourceTree = "<group>"; };
-		D72D11B92271AF5000656FCD /* SocketProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketProtocols.swift; sourceTree = "<group>"; };
-		D72D11BA2271AF5000656FCD /* SocketUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketUtils.swift; sourceTree = "<group>"; };
+		E3FA1A9487D213C26F40B8DC /* Pods-gu-provider.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gu-provider.release.xcconfig"; path = "Target Support Files/Pods-gu-provider/Pods-gu-provider.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,17 +30,37 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F12698BDC7BA766EDEAB80F /* Pods_gu_provider.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0A1B1037BAA5B9E3E9A0B0E2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				276B505BE3309155A6F161C0 /* Pods_gu_provider.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3D9E228B9B0716200D6D4946 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				6E7DBB9C25FE46DB04DC7AF8 /* Pods-gu-provider.debug.xcconfig */,
+				E3FA1A9487D213C26F40B8DC /* Pods-gu-provider.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		BF01BDBB2160A88E005E9939 = {
 			isa = PBXGroup;
 			children = (
 				BF01BDC62160A88E005E9939 /* gu-provider */,
 				BF01BDC52160A88E005E9939 /* Products */,
+				3D9E228B9B0716200D6D4946 /* Pods */,
+				0A1B1037BAA5B9E3E9A0B0E2 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -58,7 +75,6 @@
 		BF01BDC62160A88E005E9939 /* gu-provider */ = {
 			isa = PBXGroup;
 			children = (
-				D72D0FF92271A05100656FCD /* Dependencies */,
 				BF01BDC72160A88E005E9939 /* AppDelegate.swift */,
 				BF01BDC92160A88F005E9939 /* Assets.xcassets */,
 				BF01BDCB2160A88F005E9939 /* MainMenu.xib */,
@@ -68,25 +84,6 @@
 			path = "gu-provider";
 			sourceTree = "<group>";
 		};
-		D72D0FF92271A05100656FCD /* Dependencies */ = {
-			isa = PBXGroup;
-			children = (
-				D72D11AF2271A3B700656FCD /* BlueSocket */,
-			);
-			path = Dependencies;
-			sourceTree = "<group>";
-		};
-		D72D11AF2271A3B700656FCD /* BlueSocket */ = {
-			isa = PBXGroup;
-			children = (
-				D72D11B82271AF5000656FCD /* Socket.h */,
-				D72D11B72271AF5000656FCD /* Socket.swift */,
-				D72D11B92271AF5000656FCD /* SocketProtocols.swift */,
-				D72D11BA2271AF5000656FCD /* SocketUtils.swift */,
-			);
-			path = BlueSocket;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -94,9 +91,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BF01BDD22160A88F005E9939 /* Build configuration list for PBXNativeTarget "gu-provider" */;
 			buildPhases = (
+				F9A8BB846D4D42078CA9C98A /* [CP] Check Pods Manifest.lock */,
 				BF01BDC02160A88E005E9939 /* Sources */,
 				BF01BDC12160A88E005E9939 /* Frameworks */,
 				BF01BDC22160A88E005E9939 /* Resources */,
+				4000797C4D59B7A3361E9681 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -158,14 +157,58 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		4000797C4D59B7A3361E9681 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-gu-provider/Pods-gu-provider-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/BlueSocket/Socket.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Socket.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-gu-provider/Pods-gu-provider-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F9A8BB846D4D42078CA9C98A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-gu-provider-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		BF01BDC02160A88E005E9939 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D72D11BB2271AF5000656FCD /* Socket.swift in Sources */,
-				D72D11BC2271AF5000656FCD /* SocketProtocols.swift in Sources */,
-				D72D11BD2271AF5000656FCD /* SocketUtils.swift in Sources */,
 				BF01BDC82160A88E005E9939 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -301,6 +344,7 @@
 		};
 		BF01BDD32160A88F005E9939 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6E7DBB9C25FE46DB04DC7AF8 /* Pods-gu-provider.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "gu-provider/gu_provider.entitlements";
@@ -319,6 +363,7 @@
 		};
 		BF01BDD42160A88F005E9939 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E3FA1A9487D213C26F40B8DC /* Pods-gu-provider.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "gu-provider/gu_provider.entitlements";
