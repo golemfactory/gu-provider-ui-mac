@@ -68,8 +68,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     func requestHTTPFromUnixSocket(path: String, method: String, query: String) -> String? {
         do {
             let socket = try Socket.create(family: .unix, type: Socket.SocketType.stream, proto: .unix)
-            try socket.connect(to: path)
-            try socket.write(from: method + " " + query + " HTTP/1.0\r\n\r\n")
+            if (try? socket.connect(to: path)) == nil { socket.close(); return nil }
+            if (try? socket.write(from: method + " " + query + " HTTP/1.0\r\n\r\n")) == nil { socket.close(); return nil }
             var result = ""
             while true {
                 let str = try? socket.readString()
