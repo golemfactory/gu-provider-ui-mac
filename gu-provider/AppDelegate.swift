@@ -72,7 +72,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
                 additional_headers += "Content-length: " + String(body.lengthOfBytes(using: .utf8)) + "\r\n"
                 additional_headers += "Content-type: application/json\r\n"
             }
-            if (try? socket.write(from: method + " " + query + " HTTP/1.0\r\n" + additional_headers + "\r\n")) == nil { socket.close(); return nil }
+            if (try? socket.write(from: method + " " + query + " HTTP/1.0\r\n" + additional_headers + "\r\n" + body)) == nil {
+                socket.close()
+                return nil
+            }
             var result = ""
             while true {
                 let str = try? socket.readString()
