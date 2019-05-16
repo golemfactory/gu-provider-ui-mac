@@ -36,7 +36,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
 
     let statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
-    let localServerAddress = "http://127.0.0.1:61621/"
     let unixSocketPath = "/tmp/gu-provider.socket"
     var serverProcessHandle: Process?
     var localServerRequestTimer: Timer?
@@ -49,10 +48,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     }
 
     func isServerReady() -> Bool {
-        let status = getHTTPBodyFromUnixSocket(path: unixSocketPath, query: "/status?timeout=5")
-        if status == nil { return false }
+        guard let status = getHTTPBodyFromUnixSocket(path: unixSocketPath, method: "GET", query: "/status?timeout=5", body: "") else { return false }
         do {
-            let json = try JSONDecoder().decode(ServerResponse.self, from:status!.data(using: .utf8)!)
+            let json = try JSONDecoder().decode(ServerResponse.self, from:status.data(using: .utf8)!)
             let status = json.envs["hostDirect"] ?? "Error"
             return status == "Ready"
         } catch {
@@ -65,11 +63,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         self.setMenuBarText(text: isServerReady() ? "" : "!");
     }
 
-    func requestHTTPFromUnixSocket(path: String, method: String, query: String) -> String? {
+    func requestHTTPFromUnixSocket(path: String, method: String, query: String, body: String) -> String? {
         do {
             let socket = try Socket.create(family: .unix, type: Socket.SocketType.stream, proto: .unix)
             if (try? socket.connect(to: path)) == nil { socket.close(); return nil }
-            if (try? socket.write(from: method + " " + query + " HTTP/1.0\r\n\r\n")) == nil { socket.close(); return nil }
+            var additional_headers = ""
+            if body != "" {
+                additional_headers += "Content-length: " + String(body.lengthOfBytes(using: .utf8)) + "\r\n"
+                additional_headers += "Content-type: application/json\r\n"
+            }
+            if (try? socket.write(from: method + " " + query + " HTTP/1.0\r\n" + additional_headers + "\r\n")) == nil { socket.close(); return nil }
             var result = ""
             while true {
                 let str = try? socket.readString()
@@ -82,11 +85,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         }
     }
 
-    func getHTTPBodyFromUnixSocket(path: String, query: String) -> String? {
-        let response = requestHTTPFromUnixSocket(path: path, method: "GET", query: query)
-        if response == nil { return nil }
-        let body = response!.components(separatedBy: "\r\n\r\n").dropFirst().joined(separator: "\r\n\r\n")
+    func getHTTPBodyFromUnixSocket(path: String, method: String, query: String, body: String) -> String? {
+        guard let response = requestHTTPFromUnixSocket(path: path, method: method, query: query, body: body) else { return nil }
+        let body = response.components(separatedBy: "\r\n\r\n").dropFirst().joined(separator: "\r\n\r\n")
         return body
+    }
+
+    func getHTTPBodyFromUnixSocketAsData(path: String, method: String, query: String, body: String) -> Data? {
+        return getHTTPBodyFromUnixSocket(path: path, method: method, query: query, body: body)?.data(using: .utf8, allowLossyConversion: false)
     }
 
     func launchServerPolling() {
@@ -146,33 +152,48 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     func dataToBool(data: Data) -> Bool? { return String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespaces).lowercased() == "true" }
 
     func reloadHubList() {
-        let auto = getProviderOutput(arguments: ["configure", "-g", "auto"]) ?? "false".data(using: .utf8, allowLossyConversion: false)!
+        guard let auto = getHTTPBodyFromUnixSocketAsData(path: unixSocketPath, method: "GET", query: "/nodes/auto", body: "") else {
+            NSLog("Cannot connect or invalid response (/nodes/auto)");
+            return
+        }
         autoModeButton.state = (dataToBool(data: auto) ?? false) ? .on : .off
         var all: Set<String> = []
-        let data = getProviderOutput(arguments: ["--json", "lan", "list", "-I", "hub"]) ?? "[]".data(using: .utf8, allowLossyConversion: false)!
+        guard let data = getHTTPBodyFromUnixSocketAsData(path: unixSocketPath, method: "GET", query: "/lan/list", body: "") else { return }
         nodes = try! JSONDecoder().decode([NodeInfo].self, from: data)
         nodeSelected = []
         for node in nodes {
-            nodeSelected.append(dataToBool(data: getProviderOutput(arguments: ["configure", "-g", node.nodeId()!])!) ?? false)
+            guard let status = getHTTPBodyFromUnixSocketAsData(path: unixSocketPath, method: "GET", query: "/nodes/" + node.nodeId()!, body: "")
+                else { return }
+            nodeSelected.append(dataToBool(data: status)!)
             all.insert(node.nodeId()!)
         }
-        let saved_nodes_data = getProviderOutput(arguments: ["configure", "-l"]) ?? "[]".data(using: .utf8, allowLossyConversion: false)!
+        guard let saved_nodes_data = getHTTPBodyFromUnixSocketAsData(path: unixSocketPath, method: "GET", query: "/nodes?saved", body: "")
+            else { return }
         let saved_nodes = try! JSONDecoder().decode([SavedNodeInfo].self, from: saved_nodes_data)
         for node in saved_nodes {
             if !all.contains(node.nodeId) {
                 nodes.append(NodeInfo(name: node.name, address: node.address, description: "node_id=" + node.nodeId))
-                nodeSelected.append(dataToBool(data: getProviderOutput(arguments: ["configure", "-g", node.nodeId])!) ?? false)
+                guard let status = getHTTPBodyFromUnixSocketAsData(path: unixSocketPath, method: "GET", query: "/nodes/" + node.nodeId, body: "") else { return }
+                nodeSelected.append(dataToBool(data: status)!)
                 all.insert(node.nodeId)
             }
         }
         hubListTable.reloadData()
     }
 
+    struct AddressAndHostName : Encodable {
+        var address: String
+        var hostName: String
+    }
+
     @objc func checkBoxPressed(sender: NSButton) {
         let row = hubListTable.row(for:sender)
-        let _ = getProviderOutput(arguments: ["configure", sender.state == .on ? "-a" : "-d", nodes[row].nodeId() ?? "_", nodes[row].address,
-                                              nodes[row].name.replacingOccurrences(of: " ", with: "_")])
-        let _ = getProviderOutput(arguments: ["hubs", sender.state == .on ? "connect" : "disconnect", nodes[row].address])
+        let encodedBody = String(data: try! JSONEncoder().encode(AddressAndHostName(address: nodes[row].address, hostName: nodes[row].name)), encoding: .utf8)!
+        let _ = getHTTPBodyFromUnixSocket(path: unixSocketPath,
+                                          method: sender.state == .on ? "PUT" : "DELETE",
+                                          query: "/nodes/" + nodes[row].nodeId()!,
+                                          body: encodedBody)
+        let _ = getHTTPBodyFromUnixSocket(path: unixSocketPath, method: "POST", query: "/connections/" + (sender.state == .on ? "connect" : "disconnect") + "?save=1", body: "[" + nodes[row].address + "]")
     }
 
     @IBAction func addHubPressed(_ sender: NSButton) {
@@ -184,8 +205,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     }
 
     @IBAction func autoConnectPressed(_ sender: NSButton) {
-        let _ = getProviderOutput(arguments: ["configure", sender.state == .on ? "-A" : "-D"])
-        let _ = getProviderOutput(arguments: ["hubs", sender.state == .on ? "auto" : "manual"])
+        let _ = getHTTPBodyFromUnixSocket(path: unixSocketPath, method: sender.state == .on ? "PUT" : "DELETE", query: "/nodes/auto", body: "{}")
+        let _ = getHTTPBodyFromUnixSocket(path: unixSocketPath, method: "POST", query: "/connections/mode/" + (sender.state == .on ? "auto" : "manual") + "?save=1", body: "")
     }
 
     func showError(message: String) {
@@ -208,8 +229,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
                 self.showError(message: "Bad answer from " + urlString + ".")
                 return
             }
-            let args = ["configure", "-a", String(nodeIdAndHostName[0]), ipPort, String(nodeIdAndHostName[1])]
-            let _ = self.getProviderOutput(arguments: args)
+            let encodedBody = String(data: try! JSONEncoder().encode(AddressAndHostName(address: ipPort, hostName: String(nodeIdAndHostName[1]))), encoding: .utf8)!
+            let _ = self.getHTTPBodyFromUnixSocket(path: self.unixSocketPath,
+                                              method: "PUT",
+                                              query: "/nodes/" + String(nodeIdAndHostName[0]),
+                                              body: encodedBody)
             DispatchQueue.main.async {
                 self.reloadHubList()
                 self.hubIP.stringValue = ""
