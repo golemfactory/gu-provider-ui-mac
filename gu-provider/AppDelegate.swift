@@ -60,12 +60,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     }
 
     @objc func updateServerStatus() {
-        self.setMenuBarText(text: isServerReady() ? "" : "!");
+        self.setMenuBarText(text: isServerReady() ? "" : "!")
     }
 
     func requestHTTPFromUnixSocket(path: String, method: String, query: String, body: String) -> String? {
         do {
             let socket = try Socket.create(family: .unix, type: Socket.SocketType.stream, proto: .unix)
+            try socket.setReadTimeout(value: 2500)
+            try socket.setWriteTimeout(value: 2500)
             if (try? socket.connect(to: path)) == nil { socket.close(); return nil }
             var additional_headers = ""
             if body != "" {
@@ -158,7 +160,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
 
     func reloadHubList() {
         guard let auto = getHTTPBodyFromUnixSocketAsData(path: unixSocketPath, method: "GET", query: "/nodes/auto", body: "") else {
-            NSLog("Cannot connect or invalid response (/nodes/auto)");
+            NSLog("Cannot connect or invalid response (/nodes/auto)")
             return
         }
         autoModeButton.state = (dataToBool(data: auto) ?? false) ? .on : .off
