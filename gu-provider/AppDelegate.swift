@@ -196,7 +196,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
                                           method: sender.state == .on ? "PUT" : "DELETE",
                                           query: "/nodes/" + nodes[row].nodeId()!,
                                           body: encodedBody)
-        let _ = getHTTPBodyFromUnixSocket(path: unixSocketPath, method: "POST", query: "/connections/" + (sender.state == .on ? "connect" : "disconnect") + "?save=1", body: "[" + nodes[row].address + "]")
+        let _ = getHTTPBodyFromUnixSocket(path: unixSocketPath, method: "POST", query: "/connections/" + (sender.state == .on ? "connect" : "disconnect") + "?save=1", body: "[\"" + nodes[row].address + "\"]")
     }
 
     @IBAction func addHubPressed(_ sender: NSButton) {
