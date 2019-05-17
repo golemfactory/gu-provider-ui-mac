@@ -33,6 +33,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     @IBOutlet weak var hubListTable: NSTableView!
     @IBOutlet weak var hubIP: NSTextField!
     @IBOutlet weak var hubPort: NSTextField!
+    @IBOutlet weak var statusField: NSTextField!
 
     let statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
@@ -47,20 +48,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         let envs: [String:String]
     }
 
-    func isServerReady() -> Bool {
-        guard let status = getHTTPBodyFromUnixSocket(path: unixSocketPath, method: "GET", query: "/status?timeout=5", body: "") else { return false }
-        do {
-            let json = try JSONDecoder().decode(ServerResponse.self, from:status.data(using: .utf8)!)
-            let status = json.envs["hostDirect"] ?? "Error"
-            return status == "Ready"
-        } catch {
-            return false
-        }
-
-    }
-
     @objc func updateServerStatus() {
-        self.setMenuBarText(text: isServerReady() ? "" : "!")
+        if let status = getHTTPBodyFromUnixSocket(path: unixSocketPath, method: "GET", query: "/status?timeout=5", body: "") {
+            if let json = try? JSONDecoder().decode(ServerResponse.self, from:status.data(using: .utf8)!) {
+                let status = json.envs["hostDirect"] ?? "Error"
+                self.setMenuBarText(text: status == "Ready" ? "" : "!")
+                statusField.stringValue = "Golem Unlimited Provider Status: " + status
+                return
+            }
+        }
+        self.setMenuBarText(text: "!")
+        statusField.stringValue = "No Connection"
     }
 
     func requestHTTPFromUnixSocket(path: String, method: String, query: String, body: String) -> String? {
@@ -105,6 +103,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     func launchServerPolling() {
         localServerRequestTimer = Timer.scheduledTimer(timeInterval: 10, target: self,
                                                        selector: #selector(updateServerStatus), userInfo: nil, repeats: true)
+        localServerRequestTimer?.fire()
     }
 
     func setMenuBarText(text: String) {
