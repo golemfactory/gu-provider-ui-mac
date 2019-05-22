@@ -37,7 +37,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
 
     let statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
-    let socketPathGlobal = "/var/run/gu-provider.socket"
+    let socketPathGlobal = "/var/run/golemu/gu-provider.socket"
     let socketPathUserHome = ".local/run/golemunlimited/gu-provider.socket"
     var unixSocketPath = ""
     var serverProcessHandle: Process?
