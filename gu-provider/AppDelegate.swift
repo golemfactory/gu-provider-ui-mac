@@ -37,7 +37,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
 
     let statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
-    let unixSocketPath = "/tmp/gu-provider.socket"
+    let socketPathGlobal = "/var/run/gu-provider.socket"
+    let socketPathUserHome = ".local/run/golemunlimited/gu-provider.socket"
+    var unixSocketPath = ""
     var serverProcessHandle: Process?
     var localServerRequestTimer: Timer?
 
@@ -98,6 +100,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
 
     func getHTTPBodyFromUnixSocketAsData(path: String, method: String, query: String, body: String) -> Data? {
         return getHTTPBodyFromUnixSocket(path: path, method: method, query: query, body: body)?.data(using: .utf8, allowLossyConversion: false)
+    }
+
+    func configureUnixSocketPath() {
+        let localPathInHome = FileManager.default.homeDirectoryForCurrentUser.path + "/" + socketPathUserHome
+        unixSocketPath = FileManager.default.fileExists(atPath: localPathInHome) ? localPathInHome : socketPathGlobal
+        NSLog("Using unix domain socket at: %@", unixSocketPath)
     }
 
     func launchServerPolling() {
@@ -251,6 +259,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         addHubPanel.isFloatingPanel = true
         addStatusBarMenu()
+        configureUnixSocketPath()
         launchServerPolling()
         reloadHubList()
         if !UserDefaults.standard.bool(forKey: "firstRun") {
