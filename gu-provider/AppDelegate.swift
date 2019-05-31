@@ -82,8 +82,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
             }
             var result = ""
             while true {
-                let str = try? socket.readString()
-                if str == nil || str! == nil { break } else { result += str!! }
+                do {
+                    let str = try socket.readString()
+                    if str == nil { break } else { result += str! }
+                } catch {
+                    break
+                }
             }
             socket.close()
             return result
