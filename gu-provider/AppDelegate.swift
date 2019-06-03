@@ -9,8 +9,12 @@ struct NodeInfo: Decodable {
         case name = "Host name", address = "Addresses", description = "Description"
     }
     func nodeId() -> String? {
-        let parts = description.split(separator: "=")
-        if parts.count < 1 { return nil } else { return String(parts[1]) }
+        let lines = description.split(separator: "\n")
+        for line in lines {
+            let parts = line.split(separator: "=")
+            if parts.count <= 1 { return nil } else { return String(parts[1]) }
+        }
+        return nil
     }
 }
 
