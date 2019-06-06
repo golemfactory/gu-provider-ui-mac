@@ -158,19 +158,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         return nodes.count
     }
 
-    func getProviderOutput(arguments: [String]) -> Data? {
-        let providerProcess = Process()
-        providerProcess.launchPath = "/bin/bash"
-        providerProcess.arguments = ["-lc", "gu-provider " + arguments.joined(separator: " ")]
-        let pipe = Pipe()
-        providerProcess.standardOutput = pipe
-        providerProcess.standardError = nil
-        providerProcess.launch()
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        providerProcess.waitUntilExit()
-        return data
-    }
-
     func dataToBool(data: Data) -> Bool? { return String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespaces).lowercased() == "true" }
 
     func reloadHubList() {
