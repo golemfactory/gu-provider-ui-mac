@@ -144,7 +144,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         if tableColumn?.identifier.rawValue != "Selected" {
             let cell = tableView.makeView(withIdentifier:NSUserInterfaceItemIdentifier(tableColumn!.identifier.rawValue + ""), owner: nil) as! NSTableCellView
             let node = nodes[row]
-            cell.textField?.stringValue = ["", node.name, node.address, node.address][tableView.tableColumns.firstIndex(of: tableColumn!)!]
+            cell.textField?.stringValue = ["", node.name, node.address, node.nodeId() ?? ""][tableView.tableColumns.firstIndex(of: tableColumn!)!]
             return cell
         } else {
             let cell = tableView.makeView(withIdentifier:NSUserInterfaceItemIdentifier("Selected"), owner: nil) as! NSTableCellView
