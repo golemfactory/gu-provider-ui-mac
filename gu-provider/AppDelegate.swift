@@ -215,7 +215,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
 
     @IBAction func autoConnectPressed(_ sender: NSButton) {
         let _ = getHTTPBodyFromUnixSocket(path: unixSocketPath, method: sender.state == .on ? "PUT" : "DELETE", query: "/nodes/auto", body: "{}")
-        let _ = getHTTPBodyFromUnixSocket(path: unixSocketPath, method: "POST", query: "/connections/mode/" + (sender.state == .on ? "auto" : "manual") + "?save=1", body: "")
+        let _ = getHTTPBodyFromUnixSocket(path: unixSocketPath, method: "PUT", query: "/connections/mode/" + (sender.state == .on ? "auto" : "manual") + "?save=1", body: "")
     }
 
     func showError(message: String) {
