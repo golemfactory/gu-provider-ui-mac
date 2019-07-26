@@ -240,9 +240,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
             }
             let encodedBody = String(data: try! JSONEncoder().encode(AddressAndHostName(address: ipPort, hostName: String(nodeIdAndHostName[1]))), encoding: .utf8)!
             let _ = self.getHTTPBodyFromUnixSocket(path: self.unixSocketPath,
-                                              method: "PUT",
-                                              query: "/nodes/" + String(nodeIdAndHostName[0]),
-                                              body: encodedBody)
+                                                   method: "PUT",
+                                                   query: "/nodes/" + String(nodeIdAndHostName[0]),
+                                                   body: encodedBody)
+            let _ = self.getHTTPBodyFromUnixSocket(path: self.unixSocketPath,
+                                                   method: "POST", query: "/connections/connect?save=1", body: "[\"" + ipPort + "\"]");
             DispatchQueue.main.async {
                 self.reloadHubList()
                 self.hubIP.stringValue = ""
