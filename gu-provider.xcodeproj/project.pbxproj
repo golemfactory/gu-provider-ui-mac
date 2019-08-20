@@ -116,7 +116,7 @@
 				TargetAttributes = {
 					BF01BDC32160A88E005E9939 = {
 						CreatedOnToolsVersion = 10.0;
-						LastSwiftMigration = 1020;
+						LastSwiftMigration = 1030;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
 								enabled = 0;
@@ -354,7 +354,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "network.golem.gu-provider";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -372,7 +372,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "network.golem.gu-provider";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
