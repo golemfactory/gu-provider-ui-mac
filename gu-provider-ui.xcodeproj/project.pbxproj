@@ -16,7 +16,7 @@
 /* Begin PBXFileReference section */
 		276B505BE3309155A6F161C0 /* Pods_gu_provider.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_gu_provider.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E7DBB9C25FE46DB04DC7AF8 /* Pods-gu-provider.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gu-provider.debug.xcconfig"; path = "Target Support Files/Pods-gu-provider/Pods-gu-provider.debug.xcconfig"; sourceTree = "<group>"; };
-		BF01BDC42160A88E005E9939 /* gu-provider.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "gu-provider.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF01BDC42160A88E005E9939 /* gu-provider-ui.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "gu-provider-ui.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF01BDC72160A88E005E9939 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BF01BDC92160A88F005E9939 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BF01BDCC2160A88F005E9939 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -56,7 +56,7 @@
 		BF01BDBB2160A88E005E9939 = {
 			isa = PBXGroup;
 			children = (
-				BF01BDC62160A88E005E9939 /* gu-provider */,
+				BF01BDC62160A88E005E9939 /* gu-provider-ui */,
 				BF01BDC52160A88E005E9939 /* Products */,
 				3D9E228B9B0716200D6D4946 /* Pods */,
 				0A1B1037BAA5B9E3E9A0B0E2 /* Frameworks */,
@@ -66,12 +66,12 @@
 		BF01BDC52160A88E005E9939 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BF01BDC42160A88E005E9939 /* gu-provider.app */,
+				BF01BDC42160A88E005E9939 /* gu-provider-ui.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		BF01BDC62160A88E005E9939 /* gu-provider */ = {
+		BF01BDC62160A88E005E9939 /* gu-provider-ui */ = {
 			isa = PBXGroup;
 			children = (
 				BF01BDC72160A88E005E9939 /* AppDelegate.swift */,
@@ -79,15 +79,15 @@
 				BF01BDCB2160A88F005E9939 /* MainMenu.xib */,
 				BF01BDCE2160A88F005E9939 /* Info.plist */,
 			);
-			path = "gu-provider";
+			path = "gu-provider-ui";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		BF01BDC32160A88E005E9939 /* gu-provider */ = {
+		BF01BDC32160A88E005E9939 /* gu-provider-ui */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BF01BDD22160A88F005E9939 /* Build configuration list for PBXNativeTarget "gu-provider" */;
+			buildConfigurationList = BF01BDD22160A88F005E9939 /* Build configuration list for PBXNativeTarget "gu-provider-ui" */;
 			buildPhases = (
 				F9A8BB846D4D42078CA9C98A /* [CP] Check Pods Manifest.lock */,
 				BF01BDC02160A88E005E9939 /* Sources */,
@@ -99,9 +99,9 @@
 			);
 			dependencies = (
 			);
-			name = "gu-provider";
+			name = "gu-provider-ui";
 			productName = "gu-provider";
-			productReference = BF01BDC42160A88E005E9939 /* gu-provider.app */;
+			productReference = BF01BDC42160A88E005E9939 /* gu-provider-ui.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -125,7 +125,7 @@
 					};
 				};
 			};
-			buildConfigurationList = BF01BDBF2160A88E005E9939 /* Build configuration list for PBXProject "gu-provider" */;
+			buildConfigurationList = BF01BDBF2160A88E005E9939 /* Build configuration list for PBXProject "gu-provider-ui" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -138,7 +138,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				BF01BDC32160A88E005E9939 /* gu-provider */,
+				BF01BDC32160A88E005E9939 /* gu-provider-ui */,
 			);
 		};
 /* End PBXProject section */
@@ -347,12 +347,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = "gu-provider/Info.plist";
+				INFOPLIST_FILE = "gu-provider-ui/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "network.golem.gu-provider";
+				PRODUCT_BUNDLE_IDENTIFIER = "network.golem.gu-provider-ui";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -365,12 +365,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = "gu-provider/Info.plist";
+				INFOPLIST_FILE = "gu-provider-ui/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "network.golem.gu-provider";
+				PRODUCT_BUNDLE_IDENTIFIER = "network.golem.gu-provider-ui";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -379,7 +379,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		BF01BDBF2160A88E005E9939 /* Build configuration list for PBXProject "gu-provider" */ = {
+		BF01BDBF2160A88E005E9939 /* Build configuration list for PBXProject "gu-provider-ui" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BF01BDD02160A88F005E9939 /* Debug */,
@@ -388,7 +388,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		BF01BDD22160A88F005E9939 /* Build configuration list for PBXNativeTarget "gu-provider" */ = {
+		BF01BDD22160A88F005E9939 /* Build configuration list for PBXNativeTarget "gu-provider-ui" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BF01BDD32160A88F005E9939 /* Debug */,

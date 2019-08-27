@@ -253,7 +253,55 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         }.resume()
     }
 
+    func getPList(label: String, runAtLoad: Bool, keepAlive: Bool, exec: String, args: [String]?) -> String {
+        return """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+            <plist version="1.0"><dict>
+            """
+            + "<key>Label</key><string>" + label + "</string>"
+            + (args == nil ? "<key>Program</key><string>" + exec + "</string>"
+                : "<key>ProgramArguments</key><array><string>" + exec + "</string>" + args!.map({ "<string>" + $0 + "</string>"}).joined() + "</array>")
+            + (runAtLoad ? "<key>RunAtLoad</key><true/>" : "")
+            + (keepAlive ? "<key>KeepAlive</key><true/>" : "")
+            + "</dict></plist>"
+    }
+    
+    func createLaunchDPList() {
+        //let content = getPList(for: <#T##String#>, <#T##runAtLoad: Bool##Bool#>, <#T##keepAlive: Bool##Bool#>, <#T##exec: String##String#>)
+        let appDir = Bundle.main.bundleURL.appendingPathComponent("Contents", isDirectory: true).appendingPathComponent("MacOS", isDirectory: true)
+        // let execLocation = "/Users/dev/Documents/golem-unlimited/target/debug/gu-provider";
+        let execLocation = appDir.appendingPathComponent("gu-provider", isDirectory: false)
+        let providerLaunchFileContent = getPList(label: "network.golem.gu-provider", runAtLoad: true, keepAlive: true,
+                                                 exec: execLocation.path, args: ["-vv", "server", "run", "--user"])
+        let providerUILaunchFileContent = getPList(label: "network.golem.gu-provider-ui", runAtLoad: true, keepAlive: true,
+                                                 exec: execLocation.path, args: ["-vv", "server", "run", "--user"])
+        /*let providerLaunchFileContent = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+            <plist version="1.0">
+            <dict>
+            <key>Label</key><string>network.golem.gu-provider.server</string>
+            <key>ProgramArguments</key><array><string>
+            + execLocation.path +
+            </string><string>-vv</string><string>server</string><string>run</string><string>--user</string></array>
+            <key>RunAtLoad</key><true/>
+            <key>KeepAlive</key><true/>
+            </dict>
+            </plist>"
+            """*/
+        let launchDir = try! FileManager.default.url(for: .libraryDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("LaunchAgents", isDirectory: true)
+        if !FileManager.default.fileExists(atPath: launchDir.path) {
+            try? FileManager.default.createDirectory(at: launchDir, withIntermediateDirectories: true, attributes: nil)
+        }
+        let launchFileProvider = launchDir.appendingPathComponent("network.golem.gu-provider.server.plist", isDirectory: false)
+        try? providerLaunchFileContent.write(to: launchFileProvider, atomically: true, encoding: .utf8)
+        let launchFileProviderUI = launchDir.appendingPathComponent("network.golem.gu-provider-ui.plist", isDirectory: false)
+        try? providerUILaunchFileContent.write(to: launchFileProviderUI, atomically: true, encoding: .utf8)
+    }
+    
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        createLaunchDPList()
         addHubPanel.isFloatingPanel = true
         addStatusBarMenu()
         configureUnixSocketPath()
