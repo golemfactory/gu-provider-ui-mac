@@ -1,5 +1,6 @@
 .DS_Store
-*.xcworkspace
+gu-provider-ui.xcodeproj/project.xcworkspace/xcuserdata/
+gu-provider-ui.xcodeproj/project.xcworkspace/xcshareddata/
 gu-provider-ui.xcodeproj/xcuserdata/
 gu-provider-ui.xcworkspace/xcuserdata
 Pods
