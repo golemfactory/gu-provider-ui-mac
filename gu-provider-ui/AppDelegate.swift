@@ -46,6 +46,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     var unixSocketPath = ""
     var serverProcessHandle: Process?
     var localServerRequestTimer: Timer?
+    var connected = false
 
     var nodes: [NodeInfo] = []
     var nodeSelected: [Bool] = []
@@ -58,7 +59,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         if let status = getHTTPBodyFromUnixSocket(path: unixSocketPath, method: "GET", query: "/status?timeout=5", body: "") {
             if let json = try? JSONDecoder().decode(ServerResponse.self, from:status.data(using: .utf8)!) {
                 let status = json.envs["hostDirect"] ?? "Error"
-                self.setMenuBarText(text: status == "Ready" ? "" : "!")
+                let oldConnected = self.connected
+                self.connected = status == "Ready"
+                if !oldConnected && self.connected { DispatchQueue.main.async { self.reloadHubList() } }
+                self.setMenuBarText(text: self.connected ? "" : "!")
                 statusField.stringValue = "Golem Unlimited Provider Status: " + status
                 return
             }
