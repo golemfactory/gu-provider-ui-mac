@@ -10,8 +10,8 @@ To install dependencies, please run this in the main project directory:
 
 ## Build from command line
 
-`# xcodebuild -workspace gu-provider.xcworkspace -scheme gu-provider`
+`# xcodebuild -workspace gu-provider-ui.xcworkspace -scheme gu-provider-ui`
 
 ## Open in Xcode
 
-`# open gu-provider.xcworkspace` (**not** xcodeproj)
+`# open gu-provider-ui.xcworkspace` (**not** xcodeproj)
