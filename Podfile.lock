@@ -1,5 +1,5 @@
 PODS:
-  - BlueSocket (1.0.46)
+  - BlueSocket (1.0.49)
 
 DEPENDENCIES:
   - BlueSocket
@@ -9,7 +9,7 @@ SPEC REPOS:
     - BlueSocket
 
 SPEC CHECKSUMS:
-  BlueSocket: 6010272ac622367b8461f26280e22c693715726f
+  BlueSocket: 973993722fd579a62bb6469cdf7f1ccc8054796c
 
 PODFILE CHECKSUM: 00b108c47b68b0a98aaeb7941b59d884c5c14824
 
