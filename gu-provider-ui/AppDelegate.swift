@@ -271,21 +271,34 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
             + "</dict></plist>"
     }
     
-    func createLaunchDPList() {
-        let appDir = Bundle.main.bundleURL.appendingPathComponent("Contents", isDirectory: true).appendingPathComponent("MacOS", isDirectory: true)
-        // let execLocation = "/Users/dev/Documents/golem-unlimited/target/debug/gu-provider";
-        let launchDir = try! FileManager.default.url(for: .libraryDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("LaunchAgents", isDirectory: true)
+    func configureAutomaticStart() {
+        let appDir = Bundle.main.bundleURL
+            .appendingPathComponent("Contents", isDirectory: true)
+            .appendingPathComponent("MacOS", isDirectory: true)
+        let launchDir = try! FileManager.default
+            .url(for: .libraryDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+            .appendingPathComponent("LaunchAgents", isDirectory: true)
         if !FileManager.default.fileExists(atPath: launchDir.path) {
             try? FileManager.default.createDirectory(at: launchDir, withIntermediateDirectories: true, attributes: nil)
         }
-        /* provider server */
-        let execLocation = appDir.appendingPathComponent("gu-provider", isDirectory: false)
-        let providerLaunchFileContent = getPList(label: "network.golem.gu-provider", runAtLoad: true, keepAlive: true,
-                                                 exec: execLocation.path, args: ["-vv", "server", "run", "--user"])
+        /* create provider server launchd plist */
+        let execLocation = appDir
+            .deletingLastPathComponent()
+            .appendingPathComponent("Resources", isDirectory: true)
+            .appendingPathComponent("gu-provider", isDirectory: false)
+        let providerLaunchFileContent = getPList(label: "network.golem.gu-provider", runAtLoad: true,
+                                                 keepAlive: true, exec: execLocation.path,
+                                                 args: ["-vv", "server", "run", "--user"])
         let launchFileProvider = launchDir.appendingPathComponent("network.golem.gu-provider.plist", isDirectory: false)
         try? providerLaunchFileContent.write(to: launchFileProvider, atomically: true, encoding: .utf8)
-        /* provider UI */
-        let execLocationUI = appDir.appendingPathComponent("gu-provider-ui", isDirectory: false)
+        /* run provider server */
+        let server = Process()
+        server.launchPath = "/bin/launchctl"
+        server.arguments = ["load", launchFileProvider.path]
+        server.environment = ProcessInfo.processInfo.environment
+        server.launch()
+        /* create provider UI launchd plist */
+        let execLocationUI = appDir.appendingPathComponent("Golem Unlimited Provider", isDirectory: false)
         let providerUILaunchFileContent = getPList(label: "network.golem.gu-provider-ui", runAtLoad: true,
                                                    keepAlive: false, exec: execLocationUI.path, args: nil)
         let launchFileProviderUI = launchDir.appendingPathComponent("network.golem.gu-provider-ui.plist", isDirectory: false)
@@ -293,7 +306,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     }
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        createLaunchDPList()
+        configureAutomaticStart()
         addHubPanel.isFloatingPanel = true
         addStatusBarMenu()
         configureUnixSocketPath()

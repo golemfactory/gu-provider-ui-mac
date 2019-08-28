@@ -11,16 +11,18 @@
 		BF01BDC82160A88E005E9939 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF01BDC72160A88E005E9939 /* AppDelegate.swift */; };
 		BF01BDCA2160A88F005E9939 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF01BDC92160A88F005E9939 /* Assets.xcassets */; };
 		BF01BDCD2160A88F005E9939 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = BF01BDCB2160A88F005E9939 /* MainMenu.xib */; };
+		D7FDB762231531CE00F23329 /* gu-provider in Resources */ = {isa = PBXBuildFile; fileRef = D7FDB761231531CE00F23329 /* gu-provider */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		276B505BE3309155A6F161C0 /* Pods_gu_provider.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_gu_provider.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E7DBB9C25FE46DB04DC7AF8 /* Pods-gu-provider.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gu-provider.debug.xcconfig"; path = "Target Support Files/Pods-gu-provider/Pods-gu-provider.debug.xcconfig"; sourceTree = "<group>"; };
-		BF01BDC42160A88E005E9939 /* gu-provider-ui.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "gu-provider-ui.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF01BDC42160A88E005E9939 /* Golem Unlimited Provider.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Golem Unlimited Provider.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF01BDC72160A88E005E9939 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BF01BDC92160A88F005E9939 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BF01BDCC2160A88F005E9939 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		BF01BDCE2160A88F005E9939 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D7FDB761231531CE00F23329 /* gu-provider */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = "gu-provider"; sourceTree = "<group>"; };
 		E3FA1A9487D213C26F40B8DC /* Pods-gu-provider.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gu-provider.release.xcconfig"; path = "Target Support Files/Pods-gu-provider/Pods-gu-provider.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -66,7 +68,7 @@
 		BF01BDC52160A88E005E9939 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BF01BDC42160A88E005E9939 /* gu-provider-ui.app */,
+				BF01BDC42160A88E005E9939 /* Golem Unlimited Provider.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -78,6 +80,7 @@
 				BF01BDC92160A88F005E9939 /* Assets.xcassets */,
 				BF01BDCB2160A88F005E9939 /* MainMenu.xib */,
 				BF01BDCE2160A88F005E9939 /* Info.plist */,
+				D7FDB761231531CE00F23329 /* gu-provider */,
 			);
 			path = "gu-provider-ui";
 			sourceTree = "<group>";
@@ -100,8 +103,8 @@
 			dependencies = (
 			);
 			name = "gu-provider-ui";
-			productName = "gu-provider";
-			productReference = BF01BDC42160A88E005E9939 /* gu-provider-ui.app */;
+			productName = "gu-provider-ui";
+			productReference = BF01BDC42160A88E005E9939 /* Golem Unlimited Provider.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -150,6 +153,7 @@
 			files = (
 				BF01BDCA2160A88F005E9939 /* Assets.xcassets in Resources */,
 				BF01BDCD2160A88F005E9939 /* MainMenu.xib in Resources */,
+				D7FDB762231531CE00F23329 /* gu-provider in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -353,7 +357,7 @@
 					"@executable_path/../Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "network.golem.gu-provider-ui";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Golem Unlimited Provider";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -371,7 +375,7 @@
 					"@executable_path/../Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "network.golem.gu-provider-ui";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Golem Unlimited Provider";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
