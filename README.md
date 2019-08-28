@@ -12,7 +12,7 @@ To install dependencies, please run this in the main project directory:
 
 Before building the project, please replace empty "gu-provider-ui/gu-provider" file with the Golem Unlimited Provider server (macOS binary named "gu-provider"; it can be build from https://github.com/golemfactory/golem-unlimited).
 
-## Build from command line
+## Build from Command Line
 
 `# xcodebuild -workspace gu-provider-ui.xcworkspace -scheme gu-provider-ui`
 
