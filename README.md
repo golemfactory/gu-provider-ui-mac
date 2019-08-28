@@ -14,7 +14,9 @@ Before building the project, please replace empty "gu-provider-ui/gu-provider" f
 
 ## Build from Command Line
 
-`# xcodebuild -workspace gu-provider-ui.xcworkspace -scheme gu-provider-ui`
+`# xcodebuild -workspace gu-provider-ui.xcworkspace -scheme gu-provider-ui archive -archivePath gu-provider-ui`
+
+The "Golem Unlimited Provider.app" directory will be located in "gu-provider-ui.xcarchive/Products/Applications/".
 
 ## Open in Xcode
 
