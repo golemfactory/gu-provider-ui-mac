@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8F12698BDC7BA766EDEAB80F /* Pods_gu_provider.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 276B505BE3309155A6F161C0 /* Pods_gu_provider.framework */; };
+		8F12698BDC7BA766EDEAB80F /* Pods_gu_provider_ui.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 276B505BE3309155A6F161C0 /* Pods_gu_provider_ui.framework */; };
 		BF01BDC82160A88E005E9939 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF01BDC72160A88E005E9939 /* AppDelegate.swift */; };
 		BF01BDCA2160A88F005E9939 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF01BDC92160A88F005E9939 /* Assets.xcassets */; };
 		BF01BDCD2160A88F005E9939 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = BF01BDCB2160A88F005E9939 /* MainMenu.xib */; };
@@ -15,15 +15,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		276B505BE3309155A6F161C0 /* Pods_gu_provider.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_gu_provider.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6E7DBB9C25FE46DB04DC7AF8 /* Pods-gu-provider.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gu-provider.debug.xcconfig"; path = "Target Support Files/Pods-gu-provider/Pods-gu-provider.debug.xcconfig"; sourceTree = "<group>"; };
+		276B505BE3309155A6F161C0 /* Pods_gu_provider_ui.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_gu_provider_ui.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E7DBB9C25FE46DB04DC7AF8 /* Pods-gu-provider-ui.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gu-provider-ui.debug.xcconfig"; path = "Target Support Files/Pods-gu-provider-ui/Pods-gu-provider-ui.debug.xcconfig"; sourceTree = "<group>"; };
 		BF01BDC42160A88E005E9939 /* Golem Unlimited Provider.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Golem Unlimited Provider.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF01BDC72160A88E005E9939 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BF01BDC92160A88F005E9939 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BF01BDCC2160A88F005E9939 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		BF01BDCE2160A88F005E9939 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D7FDB761231531CE00F23329 /* gu-provider */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = "gu-provider"; sourceTree = "<group>"; };
-		E3FA1A9487D213C26F40B8DC /* Pods-gu-provider.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gu-provider.release.xcconfig"; path = "Target Support Files/Pods-gu-provider/Pods-gu-provider.release.xcconfig"; sourceTree = "<group>"; };
+		E3FA1A9487D213C26F40B8DC /* Pods-gu-provider-ui.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gu-provider-ui.release.xcconfig"; path = "Target Support Files/Pods-gu-provider-ui/Pods-gu-provider-ui.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,7 +31,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8F12698BDC7BA766EDEAB80F /* Pods_gu_provider.framework in Frameworks */,
+				8F12698BDC7BA766EDEAB80F /* Pods_gu_provider_ui.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -41,7 +41,7 @@
 		0A1B1037BAA5B9E3E9A0B0E2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				276B505BE3309155A6F161C0 /* Pods_gu_provider.framework */,
+				276B505BE3309155A6F161C0 /* Pods_gu_provider_ui.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -49,8 +49,8 @@
 		3D9E228B9B0716200D6D4946 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				6E7DBB9C25FE46DB04DC7AF8 /* Pods-gu-provider.debug.xcconfig */,
-				E3FA1A9487D213C26F40B8DC /* Pods-gu-provider.release.xcconfig */,
+				6E7DBB9C25FE46DB04DC7AF8 /* Pods-gu-provider-ui.debug.xcconfig */,
+				E3FA1A9487D213C26F40B8DC /* Pods-gu-provider-ui.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -168,7 +168,7 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-gu-provider/Pods-gu-provider-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-gu-provider-ui/Pods-gu-provider-ui-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/BlueSocket/Socket.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -179,7 +179,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-gu-provider/Pods-gu-provider-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-gu-provider-ui/Pods-gu-provider-ui-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		F9A8BB846D4D42078CA9C98A /* [CP] Check Pods Manifest.lock */ = {
@@ -197,7 +197,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-gu-provider-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-gu-provider-ui-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -346,7 +346,7 @@
 		};
 		BF01BDD32160A88F005E9939 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6E7DBB9C25FE46DB04DC7AF8 /* Pods-gu-provider.debug.xcconfig */;
+			baseConfigurationReference = 6E7DBB9C25FE46DB04DC7AF8 /* Pods-gu-provider-ui.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -364,7 +364,7 @@
 		};
 		BF01BDD42160A88F005E9939 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E3FA1A9487D213C26F40B8DC /* Pods-gu-provider.release.xcconfig */;
+			baseConfigurationReference = E3FA1A9487D213C26F40B8DC /* Pods-gu-provider-ui.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
