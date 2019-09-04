@@ -5,10 +5,12 @@
 ### Install Dependencies
 
 Install CocoaPods:
+
 `# sudo gem install cocoapods`
 
 To install dependencies, please run this in the main project directory:
-`# pod install`
+
+`# pod install` (or `# /usr/local/bin/pod install` if the $PATH does not include `pod`)
 
 ### Copy Server Binary
 
