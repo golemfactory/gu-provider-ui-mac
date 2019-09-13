@@ -62,14 +62,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
             NSLog("Cannot connect or invalid response (/connections/list/all)")
             return
         }
-        let connections = try! JSONDecoder().decode([[String]].self, from: connectionList)
-        for c in connections {
+        let connections = try? JSONDecoder().decode([[String]].self, from: connectionList)
+        if connections == nil { return }
+        for c in connections! {
             hubStatusesNew[c[0]] = c[1]
         }
         if hubStatusesNew != hubStatuses {
             hubStatuses = hubStatusesNew
             hubListTable.reloadData()
-            NSLog("Changed")
         }
     }
 
