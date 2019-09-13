@@ -33,7 +33,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     @IBOutlet weak var window: NSWindow!
     @IBOutlet weak var addHubPanel: NSPanel!
     @IBOutlet weak var statusBarMenu: NSMenu!
-    @IBOutlet weak var autoModeButton: NSButton!
+    @IBOutlet weak var autoModeButton: NSPopUpButton!
     @IBOutlet weak var hubListTable: NSTableView!
     @IBOutlet weak var hubIP: NSTextField!
     @IBOutlet weak var hubPort: NSTextField!
@@ -49,10 +49,28 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     var connected = false
 
     var nodes: [NodeInfo] = []
-    var nodeSelected: [Bool] = []
+    var hubStatuses = [String: String]()
+    var nodeModes: [Int] = []
 
     struct ServerResponse: Decodable {
         let envs: [String:String]
+    }
+
+    func updateConnectionStatus() {
+        var hubStatusesNew = [String: String]()
+        guard let connectionList = getHTTPBodyFromUnixSocketAsData(path: unixSocketPath, method: "GET", query: "/connections/list/all", body: "") else {
+            NSLog("Cannot connect or invalid response (/connections/list/all)")
+            return
+        }
+        let connections = try! JSONDecoder().decode([[String]].self, from: connectionList)
+        for c in connections {
+            hubStatusesNew[c[0]] = c[1]
+        }
+        if hubStatusesNew != hubStatuses {
+            hubStatuses = hubStatusesNew
+            hubListTable.reloadData()
+            NSLog("Changed")
+        }
     }
 
     @objc func updateServerStatus() {
@@ -62,6 +80,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
                 let oldConnected = self.connected
                 self.connected = status == "Ready"
                 if !oldConnected && self.connected { DispatchQueue.main.async { self.reloadHubList() } }
+                if self.connected { updateConnectionStatus() }
                 self.setMenuBarText(text: self.connected ? "" : "!")
                 statusField.stringValue = "Golem Unlimited Provider Status: " + status
                 return
@@ -121,7 +140,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     }
 
     func launchServerPolling() {
-        localServerRequestTimer = Timer.scheduledTimer(timeInterval: 10, target: self,
+        localServerRequestTimer = Timer.scheduledTimer(timeInterval: 1, target: self,
                                                        selector: #selector(updateServerStatus), userInfo: nil, repeats: true)
         localServerRequestTimer?.fire()
     }
@@ -145,15 +164,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     }
 
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        if tableColumn?.identifier.rawValue != "Selected" {
+        if tableColumn?.identifier.rawValue != "Selected" && tableColumn?.identifier.rawValue != "ConnectionMode" {
             let cell = tableView.makeView(withIdentifier:NSUserInterfaceItemIdentifier(tableColumn!.identifier.rawValue + ""), owner: nil) as! NSTableCellView
             let node = nodes[row]
-            cell.textField?.stringValue = ["", node.name, node.address, node.nodeId() ?? ""][tableView.tableColumns.firstIndex(of: tableColumn!)!]
+            cell.textField?.stringValue = [node.name, "", hubStatuses[node.address] ?? "-", node.address, node.nodeId() ?? ""][tableView.tableColumns.firstIndex(of: tableColumn!)!]
             return cell
         } else {
-            let cell = tableView.makeView(withIdentifier:NSUserInterfaceItemIdentifier("Selected"), owner: nil) as! NSTableCellView
-            (cell.viewWithTag(100) as! NSButton).action = #selector(AppDelegate.checkBoxPressed)
-            (cell.viewWithTag(100) as! NSButton).state = nodeSelected[row] ? .on : .off
+            let cell = tableView.makeView(withIdentifier:NSUserInterfaceItemIdentifier("ConnectionMode"), owner: nil) as! NSTableCellView
+            (cell.viewWithTag(100) as! NSPopUpButton).selectItem(at: nodeModes[row])
+            (cell.viewWithTag(100) as! NSPopUpButton).action = #selector(AppDelegate.connectionModeChanged)
             return cell
         }
     }
@@ -162,22 +181,27 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         return nodes.count
     }
 
-    func dataToBool(data: Data) -> Bool? { return String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespaces).lowercased() == "true" }
+    func dataToInt(data: Data) -> Int? {
+        let str = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespaces).lowercased()
+        if str == "false" { return 0 }
+        if str == "true" { return 1 }
+        return Int(str ?? "0")
+    }
 
     func reloadHubList() {
         guard let auto = getHTTPBodyFromUnixSocketAsData(path: unixSocketPath, method: "GET", query: "/nodes/auto", body: "") else {
             NSLog("Cannot connect or invalid response (/nodes/auto)")
             return
         }
-        autoModeButton.state = (dataToBool(data: auto) ?? false) ? .on : .off
+        autoModeButton.selectItem(at: dataToInt(data: auto) ?? 0)
         var all: Set<String> = []
         guard let data = getHTTPBodyFromUnixSocketAsData(path: unixSocketPath, method: "GET", query: "/lan/list", body: "") else { return }
         nodes = try! JSONDecoder().decode([NodeInfo].self, from: data)
-        nodeSelected = []
+        nodeModes = []
         for node in nodes {
             guard let status = getHTTPBodyFromUnixSocketAsData(path: unixSocketPath, method: "GET", query: "/nodes/" + node.nodeId()!, body: "")
                 else { return }
-            nodeSelected.append(dataToBool(data: status)!)
+            nodeModes.append(dataToInt(data: status)!)
             all.insert(node.nodeId()!)
         }
         guard let saved_nodes_data = getHTTPBodyFromUnixSocketAsData(path: unixSocketPath, method: "GET", query: "/nodes?saved", body: "")
@@ -187,26 +211,28 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
             if !all.contains(node.nodeId) {
                 nodes.append(NodeInfo(name: node.name, address: node.address, description: "node_id=" + node.nodeId))
                 guard let status = getHTTPBodyFromUnixSocketAsData(path: unixSocketPath, method: "GET", query: "/nodes/" + node.nodeId, body: "") else { return }
-                nodeSelected.append(dataToBool(data: status)!)
+                nodeModes.append(dataToInt(data: status)!)
                 all.insert(node.nodeId)
             }
         }
         hubListTable.reloadData()
     }
 
-    struct AddressAndHostName : Encodable {
+    struct AddressHostNameAccessLevel : Encodable {
         var address: String
         var hostName: String
+        var accessLevel: Int
     }
 
-    @objc func checkBoxPressed(sender: NSButton) {
+    @objc func connectionModeChanged(sender: NSPopUpButton) {
         let row = hubListTable.row(for:sender)
-        let encodedBody = String(data: try! JSONEncoder().encode(AddressAndHostName(address: nodes[row].address, hostName: nodes[row].name)), encoding: .utf8)!
+        let encodedBody = String(data: try! JSONEncoder().encode(AddressHostNameAccessLevel(address: nodes[row].address, hostName: nodes[row].name, accessLevel: sender.indexOfSelectedItem)), encoding: .utf8)!
+        nodeModes[row] = sender.indexOfSelectedItem
         let _ = getHTTPBodyFromUnixSocket(path: unixSocketPath,
-                                          method: sender.state == .on ? "PUT" : "DELETE",
+                                          method: sender.indexOfSelectedItem > 0 ? "PUT" : "DELETE",
                                           query: "/nodes/" + nodes[row].nodeId()!,
                                           body: encodedBody)
-        let _ = getHTTPBodyFromUnixSocket(path: unixSocketPath, method: "POST", query: "/connections/" + (sender.state == .on ? "connect" : "disconnect") + "?save=1", body: "[\"" + nodes[row].address + "\"]")
+        let _ = getHTTPBodyFromUnixSocket(path: unixSocketPath, method: "POST", query: "/connections/" + (sender.indexOfSelectedItem > 0 ? "connect" : "disconnect") + "?save=1", body: "[\"" + nodes[row].address + "\"]")
     }
 
     @IBAction func addHubPressed(_ sender: NSButton) {
@@ -217,9 +243,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         reloadHubList()
     }
 
-    @IBAction func autoConnectPressed(_ sender: NSButton) {
-        let _ = getHTTPBodyFromUnixSocket(path: unixSocketPath, method: sender.state == .on ? "PUT" : "DELETE", query: "/nodes/auto", body: "{}")
-        let _ = getHTTPBodyFromUnixSocket(path: unixSocketPath, method: "PUT", query: "/connections/mode/" + (sender.state == .on ? "auto" : "manual") + "?save=1", body: "")
+    @IBAction func autoConnectChanged(_ sender: NSPopUpButton) {
+        let _ = getHTTPBodyFromUnixSocket(path: unixSocketPath, method: sender.indexOfSelectedItem > 0 ? "PUT" : "DELETE", query: "/nodes/auto", body: "{\"accessLevel\":" + String(sender.indexOfSelectedItem) + "}")
+        let _ = getHTTPBodyFromUnixSocket(path: unixSocketPath, method: "PUT", query: "/connections/mode/" + (sender.indexOfSelectedItem > 0 ? "auto" : "manual") + "?save=1", body: "")
     }
 
     func showError(message: String) {
@@ -242,13 +268,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
                 self.showError(message: "Bad answer from " + urlString + ".")
                 return
             }
-            let encodedBody = String(data: try! JSONEncoder().encode(AddressAndHostName(address: ipPort, hostName: String(nodeIdAndHostName[1]))), encoding: .utf8)!
+            let encodedBody = String(data: try! JSONEncoder().encode(AddressHostNameAccessLevel(address: ipPort, hostName: String(nodeIdAndHostName[1]), accessLevel: 1)), encoding: .utf8)!
             let _ = self.getHTTPBodyFromUnixSocket(path: self.unixSocketPath,
                                                    method: "PUT",
                                                    query: "/nodes/" + String(nodeIdAndHostName[0]),
                                                    body: encodedBody)
             let _ = self.getHTTPBodyFromUnixSocket(path: self.unixSocketPath,
-                                                   method: "POST", query: "/connections/connect?save=1", body: "[\"" + ipPort + "\"]");
+                                                   method: "POST", query: "/connections/connect?save=1", body: "[\"" + ipPort + "\"]")
             DispatchQueue.main.async {
                 self.reloadHubList()
                 self.hubIP.stringValue = ""
