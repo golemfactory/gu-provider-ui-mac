@@ -40,7 +40,7 @@
                             <rect key="frame" x="1" y="0.0" width="925" height="334"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="none" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="31" headerView="6yA-7w-jhq" viewBased="YES" id="ASM-sw-bNI">
+                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="none" columnReordering="NO" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="31" headerView="6yA-7w-jhq" viewBased="YES" id="ASM-sw-bNI">
                                     <rect key="frame" x="0.0" y="0.0" width="925" height="309"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
@@ -325,15 +325,15 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="X1R-xv-LW7">
-                        <rect key="frame" x="20" y="385" width="122" height="17"/>
-                        <textFieldCell key="cell" lineBreakMode="clipping" title="Denied Local Hubs:" id="3ol-Ac-NRr">
+                        <rect key="frame" x="20" y="385" width="162" height="17"/>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="Unconfigured Local Hubs:" id="3ol-Ac-NRr">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="PkV-Ig-x5B">
-                        <rect key="frame" x="154" y="380" width="211" height="25"/>
+                        <rect key="frame" x="194" y="380" width="211" height="25"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="206" id="ngP-KR-WbW"/>
                         </constraints>
