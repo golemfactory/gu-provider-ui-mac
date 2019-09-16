@@ -62,9 +62,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
             NSLog("Cannot connect or invalid response (/connections/list/all)")
             return
         }
-        let connections = try? JSONDecoder().decode([[String]].self, from: connectionList)
-        if connections == nil { return }
-        for c in connections! {
+        guard let connections = try? JSONDecoder().decode([[String]].self, from: connectionList) else { return }
+        for c in connections {
             hubStatusesNew[c[0]] = c[1]
         }
         if hubStatusesNew != hubStatuses {
@@ -74,20 +73,29 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     }
 
     @objc func updateServerStatus() {
-        if let status = getHTTPBodyFromUnixSocket(path: unixSocketPath, method: "GET", query: "/status?timeout=5", body: "") {
-            if let json = try? JSONDecoder().decode(ServerResponse.self, from:status.data(using: .utf8)!) {
-                let status = json.envs["hostDirect"] ?? "Error"
-                let oldConnected = self.connected
-                self.connected = status == "Ready"
-                if !oldConnected && self.connected { DispatchQueue.main.async { self.reloadHubList() } }
-                if self.connected { updateConnectionStatus() }
-                self.setMenuBarText(text: self.connected ? "" : "!")
-                statusField.stringValue = "Golem Unlimited Provider Status: " + status
-                return
+        DispatchQueue.global(qos: .background).async {
+            if let status = self.getHTTPBodyFromUnixSocket(path: self.unixSocketPath, method: "GET", query: "/status?timeout=5", body: "") {
+                DispatchQueue.main.async {
+                    guard let json = try? JSONDecoder().decode(ServerResponse.self, from:status.data(using: .utf8)!) else {
+                        self.setMenuBarText(text: "!")
+                        self.statusField.stringValue = "Cannot Parse Server Response"
+                        return
+                    }
+                    let status = json.envs["hostDirect"] ?? "Error"
+                    let oldConnected = self.connected
+                    self.connected = status == "Ready"
+                    if !oldConnected && self.connected { DispatchQueue.main.async { self.reloadHubList() } }
+                    if self.connected { self.updateConnectionStatus() }
+                    self.setMenuBarText(text: self.connected ? "" : "!")
+                    self.statusField.stringValue = "Golem Unlimited Provider Status: " + status
+                }
+            } else {
+                DispatchQueue.main.async {
+                    self.setMenuBarText(text: "!")
+                    self.statusField.stringValue = "No Connection"
+                }
             }
         }
-        self.setMenuBarText(text: "!")
-        statusField.stringValue = "No Connection"
     }
 
     func requestHTTPFromUnixSocket(path: String, method: String, query: String, body: String) -> String? {
@@ -141,7 +149,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
 
     func launchServerPolling() {
         localServerRequestTimer = Timer.scheduledTimer(timeInterval: 1, target: self,
-                                                       selector: #selector(updateServerStatus), userInfo: nil, repeats: true)
+                                                       selector: #selector(updateServerStatus),
+                                                       userInfo: nil, repeats: true)
         localServerRequestTimer?.fire()
     }
 
@@ -196,7 +205,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         autoModeButton.selectItem(at: dataToInt(data: auto) ?? 0)
         var all: Set<String> = []
         guard let data = getHTTPBodyFromUnixSocketAsData(path: unixSocketPath, method: "GET", query: "/lan/list", body: "") else { return }
-        nodes = try! JSONDecoder().decode([NodeInfo].self, from: data)
+        guard let nodes_new = try? JSONDecoder().decode([NodeInfo].self, from: data) else { return }
+        nodes = nodes_new
         nodeModes = []
         for node in nodes {
             guard let status = getHTTPBodyFromUnixSocketAsData(path: unixSocketPath, method: "GET", query: "/nodes/" + node.nodeId()!, body: "")
@@ -206,7 +216,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         }
         guard let saved_nodes_data = getHTTPBodyFromUnixSocketAsData(path: unixSocketPath, method: "GET", query: "/nodes?saved", body: "")
             else { return }
-        let saved_nodes = try! JSONDecoder().decode([SavedNodeInfo].self, from: saved_nodes_data)
+        guard let saved_nodes = try? JSONDecoder().decode([SavedNodeInfo].self, from: saved_nodes_data) else { return }
         for node in saved_nodes {
             if !all.contains(node.nodeId) {
                 nodes.append(NodeInfo(name: node.name, address: node.address, description: "node_id=" + node.nodeId))
