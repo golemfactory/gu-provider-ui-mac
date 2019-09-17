@@ -73,6 +73,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     }
 
     @objc func updateServerStatus() {
+        if !self.window.isVisible { return }
         DispatchQueue.global(qos: .background).async {
             if let status = self.getHTTPBodyFromUnixSocket(path: self.unixSocketPath, method: "GET", query: "/status?timeout=5", body: "") {
                 DispatchQueue.main.async {
