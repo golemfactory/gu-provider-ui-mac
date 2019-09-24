@@ -74,6 +74,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
 
     @objc func updateServerStatus() {
         if !self.window.isVisible { return }
+        configureUnixSocketPath();
         DispatchQueue.global(qos: .background).async {
             if let status = self.getHTTPBodyFromUnixSocket(path: self.unixSocketPath, method: "GET", query: "/status?timeout=5", body: "") {
                 DispatchQueue.main.async {
@@ -145,7 +146,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     func configureUnixSocketPath() {
         let localPathInHome = FileManager.default.homeDirectoryForCurrentUser.path + "/" + socketPathUserHome
         unixSocketPath = FileManager.default.fileExists(atPath: localPathInHome) ? localPathInHome : socketPathGlobal
-        NSLog("Using unix domain socket at: %@", unixSocketPath)
     }
 
     func launchServerPolling() {
