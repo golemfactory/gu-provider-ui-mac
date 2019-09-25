@@ -38,6 +38,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     @IBOutlet weak var hubIP: NSTextField!
     @IBOutlet weak var hubPort: NSTextField!
     @IBOutlet weak var statusField: NSTextField!
+    @IBOutlet weak var refreshButton: NSButton!
+    @IBOutlet weak var addOtherHubButton: NSButton!
 
     let statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
@@ -72,6 +74,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         }
     }
 
+    func setButtons(enabled: Bool) {
+        self.autoModeButton.isEnabled = enabled
+        self.refreshButton.isEnabled = enabled
+        self.addOtherHubButton.isEnabled = enabled
+        self.hubListTable.isEnabled = enabled
+    }
+
     @objc func updateServerStatus() {
         if !self.window.isVisible { return }
         configureUnixSocketPath();
@@ -86,15 +95,20 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
                     let status = json.envs["hostDirect"] ?? "Error"
                     let oldConnected = self.connected
                     self.connected = status == "Ready"
-                    if !oldConnected && self.connected { DispatchQueue.main.async { self.reloadHubList() } }
+                    if !oldConnected && self.connected { DispatchQueue.main.async {
+                        self.reloadHubList()
+                        self.setButtons(enabled: true)
+                    }}
                     if self.connected { self.updateConnectionStatus() }
                     self.setMenuBarText(text: self.connected ? "" : "!")
                     self.statusField.stringValue = "Golem Unlimited Provider Status: " + status
                 }
             } else {
                 DispatchQueue.main.async {
+                    self.connected = false
                     self.setMenuBarText(text: "!")
                     self.statusField.stringValue = "No Connection"
+                    self.setButtons(enabled: false)
                 }
             }
         }
@@ -305,9 +319,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
                 : "<key>ProgramArguments</key><array><string>" + exec + "</string>" + args!.map({ "<string>" + $0 + "</string>"}).joined() + "</array>")
             + (runAtLoad ? "<key>RunAtLoad</key><true/>" : "")
             + (keepAlive ? "<key>KeepAlive</key><true/>" : "")
+            + "<key>StandardOutPath</key><string>/tmp/" + label + ".stdout</string>"
+            + "<key>StandardErrorPath</key><string>/tmp/" + label + ".stderr</string>"
             + "</dict></plist>"
     }
-    
+
     func configureAutomaticStart() {
         let appDir = Bundle.main.bundleURL
             .appendingPathComponent("Contents", isDirectory: true)
