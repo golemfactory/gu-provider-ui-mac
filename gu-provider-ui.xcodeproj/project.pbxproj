@@ -11,6 +11,7 @@
 		BF01BDC82160A88E005E9939 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF01BDC72160A88E005E9939 /* AppDelegate.swift */; };
 		BF01BDCA2160A88F005E9939 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF01BDC92160A88F005E9939 /* Assets.xcassets */; };
 		BF01BDCD2160A88F005E9939 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = BF01BDCB2160A88F005E9939 /* MainMenu.xib */; };
+		D71C9759233B5FB0007DEDC3 /* plugins in Resources */ = {isa = PBXBuildFile; fileRef = D71C9758233B5FB0007DEDC3 /* plugins */; };
 		D7FDB762231531CE00F23329 /* gu-provider in Resources */ = {isa = PBXBuildFile; fileRef = D7FDB761231531CE00F23329 /* gu-provider */; };
 /* End PBXBuildFile section */
 
@@ -22,6 +23,7 @@
 		BF01BDC92160A88F005E9939 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BF01BDCC2160A88F005E9939 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		BF01BDCE2160A88F005E9939 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D71C9758233B5FB0007DEDC3 /* plugins */ = {isa = PBXFileReference; lastKnownFileType = folder; path = plugins; sourceTree = "<group>"; };
 		D7FDB761231531CE00F23329 /* gu-provider */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = "gu-provider"; sourceTree = "<group>"; };
 		E3FA1A9487D213C26F40B8DC /* Pods-gu-provider-ui.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gu-provider-ui.release.xcconfig"; path = "Target Support Files/Pods-gu-provider-ui/Pods-gu-provider-ui.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -81,6 +83,7 @@
 				BF01BDCB2160A88F005E9939 /* MainMenu.xib */,
 				BF01BDCE2160A88F005E9939 /* Info.plist */,
 				D7FDB761231531CE00F23329 /* gu-provider */,
+				D71C9758233B5FB0007DEDC3 /* plugins */,
 			);
 			path = "gu-provider-ui";
 			sourceTree = "<group>";
@@ -152,6 +155,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BF01BDCA2160A88F005E9939 /* Assets.xcassets in Resources */,
+				D71C9759233B5FB0007DEDC3 /* plugins in Resources */,
 				BF01BDCD2160A88F005E9939 /* MainMenu.xib in Resources */,
 				D7FDB762231531CE00F23329 /* gu-provider in Resources */,
 			);
