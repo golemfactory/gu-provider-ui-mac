@@ -16,12 +16,15 @@ To install dependencies, please run this in the main project directory:
 
 Before building the project, please replace empty "gu-provider-ui/gu-provider" file with the Golem Unlimited Provider server (macOS binary named "gu-provider"; it can be build from https://github.com/golemfactory/golem-unlimited).
 
+### Copy Wasm Driver
+
+You can replace empty files in "gu-provider-ui/plugins/" with Wasm plugin files built from https://github.com/golemfactory/gu-exec-env-driver-wasm.
+
 ### Build Project
 
 `# xcodebuild -workspace gu-provider-ui.xcworkspace -scheme gu-provider-ui archive -archivePath gu-provider-ui`
 
 The "Golem Unlimited Provider.app" directory will be located in "gu-provider-ui.xcarchive/Products/Applications/".
-If you forgot to copy "gu-provider" file, you can still copy it to the "Resources" directory.
 
 ### Create DMG
 
