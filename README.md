@@ -18,7 +18,7 @@ Before building the project, please replace empty "gu-provider-ui/gu-provider" f
 
 ### Copy Wasm Driver
 
-You can replace empty files in gu-provider-ui/plugins/ with Wasm plugin files built from https://github.com/golemfactory/gu-exec-env-driver-wasm.
+You can replace empty files in "gu-provider-ui/plugins/" with Wasm plugin files built from https://github.com/golemfactory/gu-exec-env-driver-wasm.
 
 ### Build Project
 
