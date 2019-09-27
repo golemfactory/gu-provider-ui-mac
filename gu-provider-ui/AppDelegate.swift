@@ -83,7 +83,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     }
 
     @objc func updateServerStatus() {
-        if !self.window.isVisible { return }
         configureUnixSocketPath();
         DispatchQueue.global(qos: .background).async {
             if let status = self.getHTTPBodyFromUnixSocket(path: self.unixSocketPath, method: "GET", query: "/status?timeout=5", body: "") {
@@ -100,7 +99,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
                         self.reloadHubList()
                         self.setButtons(enabled: true)
                     }}
-                    if self.connected { self.updateConnectionStatus() }
+                    if self.connected && self.window.isVisible { self.updateConnectionStatus() }
                     self.setMenuBarText(text: self.connected ? "" : "!")
                     self.statusField.stringValue = "Golem Unlimited Provider Status: " + status
                 }
