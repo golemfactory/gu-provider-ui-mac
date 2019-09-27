@@ -21,6 +21,7 @@
                 <outlet property="hubIP" destination="lJ6-mE-wgv" id="mjB-Wi-2f9"/>
                 <outlet property="hubListTable" destination="ASM-sw-bNI" id="OSi-eT-Qvl"/>
                 <outlet property="hubPort" destination="fDe-pg-tDb" id="5iv-zO-EQy"/>
+                <outlet property="launchAtLoginMenuItem" destination="B9B-9T-j5F" id="cLr-yc-cSV"/>
                 <outlet property="refreshButton" destination="a5Q-2J-mhi" id="f0a-07-kBV"/>
                 <outlet property="statusBarMenu" destination="LuG-de-dCY" id="0Ca-1A-TiO"/>
                 <outlet property="statusField" destination="0pz-xs-Raf" id="HEM-8g-zUw"/>
@@ -384,6 +385,12 @@
                         <action selector="showConfigurationWindow:" target="Voe-Tx-rLC" id="ove-YM-hOD"/>
                     </connections>
                 </menuItem>
+                <menuItem title="Launch At Login" id="B9B-9T-j5F">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="runProviderAtLogin:" target="Voe-Tx-rLC" id="Gyd-j7-HPo"/>
+                    </connections>
+                </menuItem>
                 <menuItem title="Exit" id="BWl-Qd-aMR">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
@@ -431,7 +438,7 @@
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fDe-pg-tDb">
                         <rect key="frame" x="105" y="52" width="69" height="21"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="69" id="Gxw-OF-ZnO"/>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="69" id="Gxw-OF-ZnO"/>
                         </constraints>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" title="61622" drawsBackground="YES" id="qWu-dM-hi7">
                             <font key="font" metaFont="system"/>

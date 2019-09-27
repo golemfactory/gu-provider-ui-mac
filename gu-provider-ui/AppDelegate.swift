@@ -40,6 +40,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     @IBOutlet weak var statusField: NSTextField!
     @IBOutlet weak var refreshButton: NSButton!
     @IBOutlet weak var addOtherHubButton: NSButton!
+    @IBOutlet weak var launchAtLoginMenuItem: NSMenuItem!
 
     let statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
@@ -180,6 +181,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         statusBarItem.button?.image?.isTemplate = true
         statusBarItem.button?.imagePosition = NSControl.ImagePosition.imageLeft
         statusBarItem.menu = statusBarMenu
+        let index = UserDefaults.standard.integer(forKey: "runAtLoginMenuIndex")
+        self.launchAtLoginMenuItem.state = index == 0 ? .off : .on
     }
 
     @IBAction func showConfigurationWindow(_ sender: Any) {
@@ -316,7 +319,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
             """
             + "<key>Label</key><string>" + label + "</string>"
             + (args == nil ? "<key>Program</key><string>" + exec + "</string>"
-                : "<key>ProgramArguments</key><array><string>" + exec + "</string>" + args!.map({ "<string>" + $0 + "</string>"}).joined() + "</array>")
+                : "<key>ProgramArguments</key><array><string>" + exec + "</string>"
+                  + args!.map({ "<string>" + $0 + "</string>"}).joined() + "</array>")
             + (runAtLoad ? "<key>RunAtLoad</key><true/>" : "")
             + (keepAlive ? "<key>KeepAlive</key><true/>" : "")
             + "<key>StandardOutPath</key><string>/tmp/" + label + ".stdout</string>"
@@ -324,7 +328,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
             + "</dict></plist>"
     }
 
-    func configureAutomaticStart() {
+    @IBAction func runProviderAtLogin(_ sender: NSMenuItem) {
+        if sender.state == .on { sender.state = .off } else { sender.state = .on }
+        UserDefaults.standard.set(sender.state == .on ? 1 : 0, forKey: "runAtLoginMenuIndex")
+        configureAutomaticStart(sender.state == .on)
+    }
+
+    func configureAutomaticStart(_ startMenuBarUI: Bool) {
         let appDir = Bundle.main.bundleURL
             .appendingPathComponent("Contents", isDirectory: true)
             .appendingPathComponent("MacOS", isDirectory: true)
@@ -334,32 +344,45 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         if !FileManager.default.fileExists(atPath: launchDir.path) {
             try? FileManager.default.createDirectory(at: launchDir, withIntermediateDirectories: true, attributes: nil)
         }
-        /* create provider server launchd plist */
-        let execLocation = appDir
-            .deletingLastPathComponent()
+        /* create provider UI launchd plist */
+        let launchFileProviderUI = launchDir.appendingPathComponent(
+            "network.golem.gu-provider-ui.plist",
+            isDirectory: false
+        )
+        if startMenuBarUI {
+            let execLocationUI =
+                appDir.appendingPathComponent("Golem Unlimited Provider", isDirectory: false)
+            let providerUILaunchFileContent =
+                getPList(label: "network.golem.gu-provider-ui",
+                         runAtLoad: true,
+                         keepAlive: false,
+                         exec: execLocationUI.path,
+                         args: nil)
+            try? providerUILaunchFileContent.write(
+                to: launchFileProviderUI,
+                atomically: true,
+                encoding: .utf8)
+        } else {
+            try? FileManager.default.removeItem(at: launchFileProviderUI)
+        }
+    }
+
+    func startProviderServer() {
+        /* run provider server */
+        let execLocation = Bundle.main.bundleURL
+            .appendingPathComponent("Contents", isDirectory: true)
             .appendingPathComponent("Resources", isDirectory: true)
             .appendingPathComponent("gu-provider", isDirectory: false)
-        let providerLaunchFileContent = getPList(label: "network.golem.gu-provider", runAtLoad: true,
-                                                 keepAlive: true, exec: execLocation.path,
-                                                 args: ["-vv", "server", "run", "--user"])
-        let launchFileProvider = launchDir.appendingPathComponent("network.golem.gu-provider.plist", isDirectory: false)
-        try? providerLaunchFileContent.write(to: launchFileProvider, atomically: true, encoding: .utf8)
-        /* run provider server */
-        let server = Process()
-        server.launchPath = "/bin/launchctl"
-        server.arguments = ["load", launchFileProvider.path]
-        server.environment = ProcessInfo.processInfo.environment
-        server.launch()
-        /* create provider UI launchd plist */
-        let execLocationUI = appDir.appendingPathComponent("Golem Unlimited Provider", isDirectory: false)
-        let providerUILaunchFileContent = getPList(label: "network.golem.gu-provider-ui", runAtLoad: true,
-                                                   keepAlive: false, exec: execLocationUI.path, args: nil)
-        let launchFileProviderUI = launchDir.appendingPathComponent("network.golem.gu-provider-ui.plist", isDirectory: false)
-        try? providerUILaunchFileContent.write(to: launchFileProviderUI, atomically: true, encoding: .utf8)
+        let process = Process()
+        process.arguments = ["-vv", "server", "run", "--user"]
+        process.launchPath = execLocation.absoluteString
+        process.environment = ProcessInfo.processInfo.environment
+        process.launch()
+        serverProcessHandle = process
     }
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        configureAutomaticStart()
+        startProviderServer()
         addHubPanel.isFloatingPanel = true
         addStatusBarMenu()
         configureUnixSocketPath()

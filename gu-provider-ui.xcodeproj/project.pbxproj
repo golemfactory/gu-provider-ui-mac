@@ -170,16 +170,11 @@
 			files = (
 			);
 			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-gu-provider-ui/Pods-gu-provider-ui-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/BlueSocket/Socket.framework",
+				"${PODS_ROOT}/Target Support Files/Pods-gu-provider-ui/Pods-gu-provider-ui-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-			);
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Socket.framework",
+				"${PODS_ROOT}/Target Support Files/Pods-gu-provider-ui/Pods-gu-provider-ui-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
