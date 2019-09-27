@@ -368,14 +368,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     }
 
     func startProviderServer() {
-        /* run provider server */
         let execLocation = Bundle.main.bundleURL
             .appendingPathComponent("Contents", isDirectory: true)
             .appendingPathComponent("Resources", isDirectory: true)
             .appendingPathComponent("gu-provider", isDirectory: false)
         let process = Process()
         process.arguments = ["-vv", "server", "run", "--user"]
-        process.launchPath = execLocation.absoluteString
+        process.launchPath = execLocation.path
         process.environment = ProcessInfo.processInfo.environment
         process.launch()
         serverProcessHandle = process
