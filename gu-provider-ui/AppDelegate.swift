@@ -92,9 +92,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
                         self.statusField.stringValue = "Cannot Parse Server Response"
                         return
                     }
-                    let status = json.envs["hostDirect"] ?? "Error"
+                    var status = "Error"
                     let oldConnected = self.connected
-                    self.connected = status == "Ready"
+                    self.connected = false;
+                    for (k, v) in json.envs {
+                        status = status + k + ":" + v + ", "
+                        if v != "Disabled" { self.connected = true }
+                    }
                     if !oldConnected && self.connected { DispatchQueue.main.async {
                         self.reloadHubList()
                         self.setButtons(enabled: true)
