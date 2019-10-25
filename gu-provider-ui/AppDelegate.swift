@@ -46,6 +46,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
 
     let socketPathGlobal = "/var/run/golemu/gu-provider.socket"
     let socketPathUserHome = "Library/Application Support/network.Golem.Golem-Unlimited/run/gu-provider.socket"
+    let socketPathExecDir = "gu-data/run/gu-provider.socket"
     var unixSocketPath = ""
     var serverProcessHandle: Process?
     var localServerRequestTimer: Timer?
@@ -164,7 +165,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
 
     func configureUnixSocketPath() {
         let localPathInHome = FileManager.default.homeDirectoryForCurrentUser.path + "/" + socketPathUserHome
-        unixSocketPath = FileManager.default.fileExists(atPath: localPathInHome) ? localPathInHome : socketPathGlobal
+        let pathInExecDir = URL(fileURLWithPath: ProcessInfo.processInfo.arguments[0])
+                                .deletingLastPathComponent().path + "/" + socketPathExecDir
+        unixSocketPath = FileManager.default.fileExists(atPath: pathInExecDir) ? pathInExecDir
+                         : (FileManager.default.fileExists(atPath: localPathInHome) ? localPathInHome : socketPathGlobal)
     }
 
     func launchServerPolling() {
@@ -327,8 +331,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
                   + args!.map({ "<string>" + $0 + "</string>"}).joined() + "</array>")
             + (runAtLoad ? "<key>RunAtLoad</key><true/>" : "")
             + (keepAlive ? "<key>KeepAlive</key><true/>" : "")
-            + "<key>StandardOutPath</key><string>/tmp/" + label + ".stdout</string>"
-            + "<key>StandardErrorPath</key><string>/tmp/" + label + ".stderr</string>"
             + "</dict></plist>"
     }
 
