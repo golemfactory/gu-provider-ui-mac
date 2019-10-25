@@ -165,8 +165,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
 
     func configureUnixSocketPath() {
         let localPathInHome = FileManager.default.homeDirectoryForCurrentUser.path + "/" + socketPathUserHome
-        let pathInExecDir = URL(fileURLWithPath: ProcessInfo.processInfo.arguments[0])
-                                .deletingLastPathComponent().path + "/" + socketPathExecDir
+        let providerExecDir = Bundle.main.bundleURL
+            .appendingPathComponent("Contents", isDirectory: true)
+            .appendingPathComponent("Resources", isDirectory: true)
+        let pathInExecDir = providerExecDir.path + "/" + socketPathExecDir
         unixSocketPath = FileManager.default.fileExists(atPath: pathInExecDir) ? pathInExecDir
                          : (FileManager.default.fileExists(atPath: localPathInHome) ? localPathInHome : socketPathGlobal)
     }
@@ -374,12 +376,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
     }
 
     func startProviderServer() {
-        let execLocation = Bundle.main.bundleURL
+        let dirLocation = Bundle.main.bundleURL
             .appendingPathComponent("Contents", isDirectory: true)
             .appendingPathComponent("Resources", isDirectory: true)
-            .appendingPathComponent("gu-provider", isDirectory: false)
+        let execLocation = dirLocation.appendingPathComponent("gu-provider", isDirectory: false)
+        let portableModeFile = dirLocation.appendingPathComponent(".gu-portable", isDirectory: false)
         let process = Process()
-        process.arguments = ["-vv", "server", "run", "--user"]
+        if FileManager.default.fileExists(atPath: portableModeFile.path) {
+            process.arguments = ["-vv", "server", "run"]
+        } else {
+            process.arguments = ["-vv", "server", "run", "--user"]
+        }
         process.launchPath = execLocation.path
         process.environment = ProcessInfo.processInfo.environment
         process.launch()
