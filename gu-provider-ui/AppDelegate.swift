@@ -384,7 +384,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         let process = Process()
         if portableMode {
             let appDirParent = Bundle.main.bundleURL.deletingLastPathComponent()
-            process.arguments = ["-vv", "server", "run", "-c", appDirParent.path + "/gu-data/config"]
+            let configDir = appDirParent.appendingPathComponent("gu-data").appendingPathComponent("config")
+            try? FileManager.default.createDirectory(
+                at: configDir,
+                withIntermediateDirectories: true,
+                attributes: nil
+            )
+            try? """
+                {"workDir":"../data", "cacheDir":"../cache", "runtimeDir":"../run"}
+            """.write(to: configDir.appendingPathComponent("dir-paths.json"), atomically: true, encoding: .utf8)
+            process.arguments = ["-vv", "server", "run", "-c", configDir.path]
         } else {
             process.arguments = ["-vv", "server", "run", "--user"]
         }
