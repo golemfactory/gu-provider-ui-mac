@@ -380,10 +380,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
             .appendingPathComponent("Contents", isDirectory: true)
             .appendingPathComponent("Resources", isDirectory: true)
         let execLocation = dirLocation.appendingPathComponent("gu-provider", isDirectory: false)
-        let portableModeFile = dirLocation.appendingPathComponent(".gu-portable", isDirectory: false)
+        let portableMode = Bundle.main.infoDictionary!["GUPortable"] as! Bool
         let process = Process()
-        if FileManager.default.fileExists(atPath: portableModeFile.path) {
-            process.arguments = ["-vv", "server", "run"]
+        if portableMode {
+            let appDirParent = Bundle.main.bundleURL.deletingLastPathComponent()
+            process.arguments = ["-vv", "server", "run", "-c", appDirParent.path + "/gu-data/config"]
         } else {
             process.arguments = ["-vv", "server", "run", "--user"]
         }
