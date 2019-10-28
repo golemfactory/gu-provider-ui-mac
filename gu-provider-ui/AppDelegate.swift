@@ -46,7 +46,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
 
     let socketPathGlobal = "/var/run/golemu/gu-provider.socket"
     let socketPathUserHome = "Library/Application Support/network.Golem.Golem-Unlimited/run/gu-provider.socket"
-    let socketPathExecDir = "gu-data/run/gu-provider.socket"
+    let socketPathPortable = "gu-data/run/gu-provider.socket"
     var unixSocketPath = ""
     var serverProcessHandle: Process?
     var localServerRequestTimer: Timer?
@@ -165,11 +165,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
 
     func configureUnixSocketPath() {
         let localPathInHome = FileManager.default.homeDirectoryForCurrentUser.path + "/" + socketPathUserHome
-        let providerExecDir = Bundle.main.bundleURL
-            .appendingPathComponent("Contents", isDirectory: true)
-            .appendingPathComponent("Resources", isDirectory: true)
-        let pathInExecDir = providerExecDir.path + "/" + socketPathExecDir
-        unixSocketPath = FileManager.default.fileExists(atPath: pathInExecDir) ? pathInExecDir
+        let providerPortableDir = Bundle.main.bundleURL.deletingLastPathComponent()
+        let pathInPortableMode = providerPortableDir.path + "/" + socketPathPortable
+        unixSocketPath = FileManager.default.fileExists(atPath: pathInPortableMode) ? pathInPortableMode
                          : (FileManager.default.fileExists(atPath: localPathInHome) ? localPathInHome : socketPathGlobal)
     }
 
