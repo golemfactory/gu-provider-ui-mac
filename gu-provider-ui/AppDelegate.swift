@@ -169,7 +169,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
         let pathInPortableMode = providerPortableDir.path + "/" + socketPathPortable
         unixSocketPath = FileManager.default.fileExists(atPath: pathInPortableMode) ? pathInPortableMode
                          : (FileManager.default.fileExists(atPath: localPathInHome) ? localPathInHome : socketPathGlobal)
-        NSLog("Unix domain socket: " + unixSocketPath)
     }
 
     func launchServerPolling() {
