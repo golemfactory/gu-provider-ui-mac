@@ -391,13 +391,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDelegate, NSTable
             try? ("{"
                 + "\"workDir\":\"../data\","
                 + "\"cacheDir\":\"../cache\","
-                + "\"runtimeDir\":\"../run\","
-                + "\"tmpDir\":\"../tmp\""
+                + "\"runtimeDir\":\"../run\""
                 + "}").write(to: configDir.appendingPathComponent("dir-paths.json"), atomically: true, encoding: .utf8)
-            //"""
-            //try? """
-            //    {"workDir":"../data", "cacheDir":"../cache", "runtimeDir":"../run"}
-            //""".write(to: configDir.appendingPathComponent("dir-paths.json"), atomically: true, encoding: .utf8)
             process.arguments = ["-vv", "-c", configDir.path, "server", "run"]
         } else {
             process.arguments = ["-vv", "server", "run", "--user"]
